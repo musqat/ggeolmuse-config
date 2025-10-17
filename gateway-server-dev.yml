@@ -11,7 +11,7 @@ spring:
           predicates:
             - Path=/api/market/public/**
           filters:
-            - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
+            - RewritePath=/api/market/public(?<segment>/.*|/?), /api/internal/public/$\{segment}
 
         # Market Data Service - Private APIs (JWT 필요)
         - id: market-data-private-route
@@ -19,7 +19,7 @@ spring:
           predicates:
             - Path=/api/market/**
           filters:
-            - RewritePath=/api/market/(?<segment>.*), /api/internal/$\{segment}
+            - RewritePath=/api/market(?<segment>/.*|/?), /api/internal/$\{segment}
             - TokenRelay
 
         # User Service - Auth endpoints (Public)
@@ -28,7 +28,7 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
-            - RewritePath=/api/auth/(?<segment>.*), /api/internal/auth/$\{segment}
+            - RewritePath=/api/auth(?<segment>/.*|/?), /api/internal/auth/$\{segment}
 
         # User Service - User APIs (JWT 필요)
         - id: user-private-route
@@ -45,7 +45,7 @@ spring:
           predicates:
             - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**
           filters:
-            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)(?<segment>/.*|/?), /api/internal/$\{prefix}/$\{segment}
             - TokenRelay
 
         # Backtest Service (JWT 필요)
@@ -54,7 +54,7 @@ spring:
           predicates:
             - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
           filters:
-            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)(?<segment>/.*|/?), /api/internal/$\{prefix}/$\{segment}
             - TokenRelay
 
 services:
