@@ -45,7 +45,7 @@ spring:
           predicates:
             - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**
           filters:
-            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)(?<segment>/.*|/?), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
         # Backtest Service (JWT 필요)
@@ -54,7 +54,7 @@ spring:
           predicates:
             - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
           filters:
-            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)(?<segment>/.*|/?), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
 services:
