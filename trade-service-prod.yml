@@ -1,0 +1,23 @@
+# Trade Service - Production Profile
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/tradedb}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    com.muscat.trade: INFO
+    org.springframework.security: WARN

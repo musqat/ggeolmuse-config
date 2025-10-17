@@ -1,0 +1,40 @@
+# Market Data Service - Production Profile
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/marketdb}
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  sql:
+    init:
+      mode: never
+
+# Alpha Vantage for Prod (유료 API)
+alphavantage:
+  enabled: true
+  api-key: ${ALPHAVANTAGE_API_KEY}
+  rate-limit-per-second: 5
+  timeout-seconds: 15
+
+yahoo-finance:
+  enabled: false
+
+korea-exim:
+  enabled: true
+
+logging:
+  level:
+    com.muscat.marketdata: INFO
+    org.springframework.security: WARN

@@ -1,0 +1,8 @@
+# Backtest Service - Development Profile
+
+logging:
+  level:
+    com.muscat.backtest: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
