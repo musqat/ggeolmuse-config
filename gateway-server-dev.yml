@@ -36,7 +36,7 @@ spring:
           predicates:
             - Path=/api/users/**,/api/accounts/**
           filters:
-            - RewritePath=/api/(?<prefix>users|accounts)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(?<prefix>users|accounts)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
         # Trade Service (JWT 필요)
