@@ -5,13 +5,11 @@ spring:
   cloud:
     gateway:
       routes:
-        # Market Data Service - Public APIs
+        # Market Data Service - Public APIs (no auth needed)
         - id: market-data-public-route
           uri: http://market-data-service:8083
           predicates:
             - Path=/api/market/public/**
-          filters:
-            - RewritePath=/api/market/public(?<segment>/.*|/?), /api/internal/public/$\{segment}
 
         # Market Data Service - Private APIs (JWT 필요)
         - id: market-data-private-route
@@ -19,16 +17,13 @@ spring:
           predicates:
             - Path=/api/market/**
           filters:
-            - RewritePath=/api/market(?<segment>/.*|/?), /api/internal/$\{segment}
             - TokenRelay
 
-        # User Service - Auth endpoints (Public)
+        # User Service - Auth endpoints (Public - no auth needed)
         - id: user-auth-route
           uri: http://user-service:8080
           predicates:
             - Path=/api/auth/**
-          filters:
-            - RewritePath=/api/auth(?<segment>/.*|/?), /api/internal/auth/$\{segment}
 
         # User Service - User APIs (JWT 필요)
         - id: user-private-route
@@ -36,7 +31,6 @@ spring:
           predicates:
             - Path=/api/users/**,/api/accounts/**
           filters:
-            - RewritePath=/api/(?<prefix>users|accounts)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
         # Trade Service (JWT 필요)
@@ -45,7 +39,6 @@ spring:
           predicates:
             - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**
           filters:
-            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
         # Backtest Service (JWT 필요)
@@ -54,7 +47,6 @@ spring:
           predicates:
             - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
           filters:
-            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)(?<segment>/.*|/?), /api/internal/$\{prefix}$\{segment}
             - TokenRelay
 
 services:
