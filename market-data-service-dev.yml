@@ -1,5 +1,21 @@
 # Market Data Service - Development Profile
 
+# Actuator & Prometheus Configuration
+management:
+  server:
+    port: 9090  # Metrics-only port (separate from main application port)
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
 # Yahoo Finance for Dev (무료)
 yahoo-finance:
   enabled: true
