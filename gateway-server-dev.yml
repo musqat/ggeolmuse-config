@@ -69,11 +69,21 @@ logging:
     com.muscat.gateway: INFO
     reactor.netty: WARN
 
+# Management port for health checks and metrics
 management:
+  server:
+    port: 9090  # Separate port for metrics and health checks
   endpoints:
     web:
+      base-path: /
       exposure:
-        include: health,info,gateway,routes
+        include: health,info,gateway,routes,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: gateway-server
   endpoint:
     gateway:
       enabled: true
