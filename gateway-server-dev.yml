@@ -45,7 +45,7 @@ spring:
         - id: backtest-route
           uri: http://backtest-service:8082
           predicates:
-            - Path=/api/trading-simulation/**,/api/analysis/**
+            - Path=/api/backtest/**,/api/trading-simulation/**,/api/analysis/**
           filters:
             - TokenRelay
 
