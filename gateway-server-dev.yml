@@ -45,9 +45,15 @@ spring:
         - id: backtest-route
           uri: http://backtest-service:8082
           predicates:
-            - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
+            - Path=/api/trading-simulation/**,/api/analysis/**
           filters:
             - TokenRelay
+
+        # Backtest Internal API (서비스 간 통신용)
+        - id: backtest-internal-route
+          uri: http://backtest-service:8082
+          predicates:
+            - Path=/api/internal/backtest/**
 
 services:
   market-data:
