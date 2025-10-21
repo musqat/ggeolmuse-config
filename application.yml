@@ -1,0 +1,51 @@
+# 모든 서비스 공통 설정
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
+
+# Kafka 공통 설정
+spring:
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    consumer:
+      group-id: ${spring.application.name:ggeolmuse}-consumer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.muscat.*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        compression.type: gzip
+        max.in.flight.requests.per.connection: 5
+        enable.idempotence: true
+
+# 로깅 설정 (모든 서비스 공통)
+logging:
+  level:
+    root: INFO
+    # Spring Framework
+    org.springframework.security: INFO         # Security DEBUG 로그 제거 (health check 등)
+    org.springframework.boot.actuate: WARN     # Actuator 로그 최소화
+    org.springframework.cloud.gateway: INFO    # Gateway 기본 로그만
+    # HTTP Client
+    feign: DEBUG                               # Feign 클라이언트 디버깅 (서비스 간 통신)
+    reactor.netty: WARN                        # Netty 불필요한 로그 제거
+    # Hibernate/JPA
+    org.hibernate.SQL: WARN                    # SQL 로그 비활성화
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN  # 파라미터 바인딩 로그 비활성화
+    org.hibernate.orm.jdbc.bind: WARN          # JDBC 바인딩 로그 비활성화
+    # Kafka
+    org.springframework.kafka: INFO            # Kafka 클라이언트 로그
+    org.apache.kafka: WARN                     # Apache Kafka 내부 로그 최소화
+    # 비즈니스 로직
+    com.muscat: DEBUG                          # 코드는 상세 로그 유지
