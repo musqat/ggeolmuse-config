@@ -16,10 +16,10 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
   sql:
     init:
@@ -82,7 +82,7 @@ marketdata:
   feed:
     symbol:
       enabled: ${SYMBOL_COLLECTION_ENABLED:true}
-      startup-delay: ${SYMBOL_STARTUP_DELAY:30}
+      startup-delay: ${SYMBOL_STARTUP_DELAY:90}
     schedule:
       enabled: ${SCHEDULE_ENABLED:false}
       cron: ${SCHEDULE_CRON:0 0 5 * * *}
