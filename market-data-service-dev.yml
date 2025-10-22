@@ -27,7 +27,7 @@ spring:
       schema-locations: classpath:schema.sql
 
 alphavantage:
-  enabled: false  # Yahoo Finance 사용으로 전환
+  enabled: true  # Alpha Vantage로 전환
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
   rate-limit-per-second: 5
   timeout-seconds: 15
@@ -40,7 +40,7 @@ korea-exim:
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
 yahoo-finance:
-  enabled: true  # 무료 데이터 소스로 활성화
+  enabled: false  # Alpha Vantage 사용
   timeout-seconds: 10
   user-agent: "Mozilla/5.0 (Market Data Service)"
 
@@ -100,11 +100,12 @@ marketdata:
     lookback-days: ${LOOKBACK_DAYS:365}  # 과거 데이터 수집 기간 (일)
 
   # Symbol loader (NASDAQ API 또는 CSV 파일 기반 종목 로드)
+  # Alpha Vantage 사용 시 비활성화 - 관리자 페이지에서 수동으로 종목 추가
   symbol-loader:
-    enabled: ${SYMBOL_LOADER_ENABLED:true}  # 종목 로더 활성화
-    use-api: ${SYMBOL_LOADER_USE_API:true}  # NASDAQ API 사용 (false면 CSV fallback)
+    enabled: ${SYMBOL_LOADER_ENABLED:false}  # 종목 로더 비활성화
+    use-api: ${SYMBOL_LOADER_USE_API:false}  # NASDAQ API 비활성화
     market-cap-filter: ${SYMBOL_LOADER_MARKET_CAP_FILTER:mega,large}  # 시가총액 필터 (mega,large,mid,small,micro)
-    collect-data: ${SYMBOL_LOADER_COLLECT_DATA:true}  # 로드 후 즉시 데이터 수집 여부
+    collect-data: ${SYMBOL_LOADER_COLLECT_DATA:false}  # 로드 후 즉시 데이터 수집 비활성화
     lookback-days: ${SYMBOL_LOADER_LOOKBACK_DAYS:365}  # 과거 데이터 수집 기간 (일)
     include-dividends: ${SYMBOL_LOADER_INCLUDE_DIVIDENDS:true}  # 배당 데이터 포함 여부
 
