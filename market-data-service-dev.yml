@@ -1,9 +1,115 @@
-# Market Data Service - Development Profile
+spring:
+  datasource:
+    url: jdbc:h2:mem:marketdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
 
-# Actuator & Prometheus Configuration
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+alphavantage:
+  enabled: true
+  api-key: ${ALPHAVANTAGE_API_KEY:demo}
+  rate-limit-per-second: 5
+  timeout-seconds: 15
+  base-url: "https://www.alphavantage.co/query"
+
+korea-exim:
+  enabled: true
+  api:
+    auth-key: ${KOREAEXIM_API_KEY:demo}
+  base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
+
+yahoo-finance:
+  enabled: false
+  timeout-seconds: 10
+  user-agent: "Mozilla/5.0 (Market Data Service)"
+
+keycloak:
+  resource: muscat-user-cc
+
+marketdata:
+  constants:
+    fx:
+      default-base-rate: ${FX_DEFAULT_RATE:1350}
+      scale: ${FX_SCALE:6}
+      max-fallback-days: ${FX_FALLBACK_DAYS:7}
+    batch:
+      min-rpm: ${BATCH_MIN_RPM:1}
+      max-backoff-ms: ${BATCH_MAX_BACKOFF:30000}
+      millis-per-minute: 60000
+    database:
+      symbol-max-length: 16
+      currency-length: 3
+      decimal-precision: 19
+      decimal-scale: 8
+    calculation:
+      percent-scale: 4
+      percentage-multiplier: 100
+
+    fx-ingest:
+      backfill:
+        enabled: ${FX_BACKFILL_ENABLED:false}
+        lookback-days: ${FX_BACKFILL_LOOKBACK:365}
+      incremental:
+        enabled: ${FX_INCREMENTAL_ENABLED:true}
+        default-days: ${FX_INCREMENTAL_DAYS:30}
+      scheduler:
+        enabled: ${FX_SCHEDULER_ENABLED:false}
+        cron: ${FX_SCHEDULER_CRON:0 10 11 * * MON-FRI}
+        zone: ${FX_SCHEDULER_ZONE:Asia/Seoul}
+
+  # Data collection (Legacy - Deprecated)
+  feed:
+    symbol:
+      enabled: ${SYMBOL_COLLECTION_ENABLED:false}  # Deprecated: Kafka 이벤트 방식 사용
+      startup-delay: ${SYMBOL_STARTUP_DELAY:30}
+    schedule:
+      enabled: ${SCHEDULE_ENABLED:false}
+      cron: ${SCHEDULE_CRON:0 0 5 * * *}
+      timezone: ${SCHEDULE_TIMEZONE:America/New_York}
+      lookback-days: ${SCHEDULE_LOOKBACK:365}
+
+  # Market cap based symbol collection
+  top-stocks:
+    count: ${TOP_STOCKS_COUNT:300}  # 시가총액 상위 주식 개수
+  top-etfs:
+    count: ${TOP_ETFS_COUNT:100}    # 시가총액 상위 ETF 개수
+  marketcap-collection:
+    enabled: ${MARKETCAP_COLLECTION_ENABLED:true}  # 시가총액 기반 종목 수집 활성화
+    data-collection-enabled: ${DATA_COLLECTION_ENABLED:true}  # 수집 후 Kafka 이벤트 발행 여부
+    lookback-days: ${LOOKBACK_DAYS:365}  # 과거 데이터 수집 기간 (일)
+
+  # Cache
+  cache:
+    price-data-ttl: ${CACHE_PRICE_TTL:300}
+    fx-rate-ttl: ${CACHE_FX_TTL:3600}
+    symbol-info-ttl: ${CACHE_SYMBOL_TTL:86400}
+    dividend-ttl: ${CACHE_DIVIDEND_TTL:86400}
+
+
 management:
   server:
-    port: 9090  # Metrics-only port (separate from main application port)
+    port: 9090
   endpoints:
     web:
       base-path: /
@@ -15,23 +121,3 @@ management:
         enabled: true
     tags:
       application: ${spring.application.name}
-
-# Yahoo Finance for Dev (무료)
-yahoo-finance:
-  enabled: true
-  timeout-seconds: 10
-  user-agent: "Mozilla/5.0 (Market Data Service Dev)"
-
-alphavantage:
-  enabled: false
-
-korea-exim:
-  enabled: true
-
-logging:
-  level:
-    com.muscat.marketdata: DEBUG
-    org.springframework.security: INFO
-    org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql.BasicBinder: WARN
-    org.hibernate.orm.jdbc.bind: WARN
