@@ -29,7 +29,7 @@ spring:
 alphavantage:
   enabled: true  # Alpha Vantage로 전환
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
-  rate-limit-per-second: 5
+  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # Premium Plan: 75 calls/minute
   timeout-seconds: 15
   base-url: "https://www.alphavantage.co/query"
 
@@ -48,6 +48,10 @@ keycloak:
   resource: muscat-user-cc
 
 marketdata:
+  # 자동 초기화 설정 (서비스 시작 시 랜덤 종목 추가 및 데이터 수집)
+  auto-init:
+    enabled: ${MARKETDATA_AUTO_INIT:true}
+
   constants:
     fx:
       default-base-rate: ${FX_DEFAULT_RATE:1350}
@@ -91,9 +95,9 @@ marketdata:
 
   # Market cap based symbol collection (Alpha Vantage API)
   top-stocks:
-    count: ${TOP_STOCKS_COUNT:100}  # 시가총액 상위 주식 개수
+    count: ${TOP_STOCKS_COUNT:10}  # 시가총액 상위 주식 개수 (테스트용)
   top-etfs:
-    count: ${TOP_ETFS_COUNT:10}    # 시가총액 상위 ETF 개수
+    count: ${TOP_ETFS_COUNT:1}    # 시가총액 상위 ETF 개수 (테스트용)
   marketcap-collection:
     enabled: ${MARKETCAP_COLLECTION_ENABLED:true}  # 시가총액 기반 종목 수집 활성화
     data-collection-enabled: ${DATA_COLLECTION_ENABLED:true}  # 수집 후 Kafka 이벤트 발행 여부
