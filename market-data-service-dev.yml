@@ -40,7 +40,7 @@ korea-exim:
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
 yahoo-finance:
-  enabled: false  # Alpha Vantage 사용
+  enabled: false  # AV 사용 시 false, YF 사용 시 true (테스트용)
   timeout-seconds: 10
   user-agent: "Mozilla/5.0 (Market Data Service)"
 
