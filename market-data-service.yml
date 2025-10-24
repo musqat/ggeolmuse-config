@@ -48,6 +48,11 @@ keycloak:
   resource: muscat-user-cc
 
 marketdata:
+  # Symbol collection (for SymbolCollector)
+  symbol-collection:
+    enabled: ${SYMBOL_COLLECTION_ENABLED:true}
+    lookback-days: ${SYMBOL_LOOKBACK_DAYS:365}
+
   constants:
     fx:
       default-base-rate: ${FX_DEFAULT_RATE:1350}
