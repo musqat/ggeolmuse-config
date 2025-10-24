@@ -27,7 +27,7 @@ spring:
       schema-locations: classpath:schema.sql
 
 alphavantage:
-  enabled: false
+  enabled: true
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
   rate-limit-per-second: 5
   timeout-seconds: 15
@@ -40,7 +40,7 @@ korea-exim:
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
 yahoo-finance:
-  enabled: true
+  enabled: false
   timeout-seconds: 10
   user-agent: "Mozilla/5.0 (Market Data Service)"
 
