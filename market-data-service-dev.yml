@@ -27,7 +27,7 @@ spring:
       schema-locations: classpath:schema.sql
 
 alphavantage:
-  enabled: true  # Alpha Vantage로 전환
+  enabled: false  # Yahoo Finance로 테스트 전환
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
   rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # Premium Plan: 75 calls/minute
   timeout-seconds: 15
@@ -40,7 +40,7 @@ korea-exim:
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
 yahoo-finance:
-  enabled: false  # AV 사용 시 false, YF 사용 시 true (테스트용)
+  enabled: true  # YF 테스트용 활성화
   timeout-seconds: 10
   user-agent: "Mozilla/5.0 (Market Data Service)"
 
