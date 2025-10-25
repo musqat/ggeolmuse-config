@@ -30,6 +30,15 @@ management:
   health:
     kafka:
       enabled: false
+    redis:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
 
 alphavantage:
   enabled: true
