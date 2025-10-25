@@ -9,6 +9,12 @@ management:
 
 # Kafka 공통 설정
 spring:
+  # Redis 공통 설정 (Gateway Rate Limiting 등에 사용)
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}
+
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
