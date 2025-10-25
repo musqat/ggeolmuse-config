@@ -40,28 +40,51 @@ management:
       exposure:
         include: health,info,prometheus
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Provider 설정 (AlphaVantage ↔ Yahoo Finance 전환)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⚠️ 더 이상 alphavantage.enabled, yahoo-finance.enabled 사용 안 함!
+# ✅ marketdata.provider 하나로 통합 관리
+#
+# 사용법:
+#   marketdata.provider: alphavantage  → AlphaVantage 사용
+#   marketdata.provider: yahoo         → Yahoo Finance 사용
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# AlphaVantage 설정 (provider=alphavantage일 때 사용)
 alphavantage:
-  enabled: true
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
   rate-limit-per-second: 5
   timeout-seconds: 15
   base-url: "https://www.alphavantage.co/query"
+  retry:
+    max-attempts: 3
+    backoff-delay: 1000
 
+# Korea EXIM 환율 API
 korea-exim:
   enabled: true
   api:
     auth-key: ${KOREAEXIM_API_KEY:demo}
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
-yahoo-finance:
-  enabled: false
-  timeout-seconds: 10
-  user-agent: "Mozilla/5.0 (Market Data Service)"
+# Yahoo Finance 설정 (provider=yahoo일 때 사용)
+yahoo:
+  finance:
+    base-url: "https://query1.finance.yahoo.com"
+    timeout-seconds: 10
+    rate-limit-per-second: 10
+    retry:
+      max-attempts: 3
+      backoff-delay: 500
 
 keycloak:
   resource: muscat-user-cc
 
 marketdata:
+  # ━━━ Provider 전환: 이 한 줄만 바꾸면 전체 프로바이더 전환! ━━━
+  provider: ${MARKETDATA_PROVIDER:yahoo}  # alphavantage 또는 yahoo
+
   # Symbol collection (for SymbolCollector)
   symbol-collection:
     enabled: ${SYMBOL_COLLECTION_ENABLED:true}
