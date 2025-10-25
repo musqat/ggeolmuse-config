@@ -21,18 +21,7 @@ spring:
     init:
       mode: never
 
-# Alpha Vantage for Prod (유료 API)
-alphavantage:
-  enabled: true
-  api-key: ${ALPHAVANTAGE_API_KEY}
-  rate-limit-per-second: 5
-  timeout-seconds: 15
-
-yahoo-finance:
-  enabled: false
-
-korea-exim:
-  enabled: true
+# Provider 설정은 기본 설정(market-data-service.yml) 사용
 
 logging:
   level:

@@ -26,23 +26,8 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
 
-alphavantage:
-  enabled: false  # Yahoo Finance로 테스트 전환
-  api-key: ${ALPHAVANTAGE_API_KEY:demo}
-  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # Premium Plan: 75 calls/minute
-  timeout-seconds: 15
-  base-url: "https://www.alphavantage.co/query"
-
-korea-exim:
-  enabled: true
-  api:
-    auth-key: ${KOREAEXIM_API_KEY:demo}
-  base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
-
-yahoo-finance:
-  enabled: true  # YF 테스트용 활성화
-  timeout-seconds: 10
-  user-agent: "Mozilla/5.0 (Market Data Service)"
+# Provider 설정은 기본 설정(market-data-service.yml) 사용
+# Dev 환경에서 다른 provider를 테스트하려면 여기에 오버라이드 추가
 
 keycloak:
   resource: muscat-user-cc
