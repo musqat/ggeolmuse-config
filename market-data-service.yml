@@ -26,6 +26,11 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
 
+management:
+  health:
+    kafka:
+      enabled: false
+
 alphavantage:
   enabled: true
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
