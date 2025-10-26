@@ -30,7 +30,7 @@ management:
 # AlphaVantage 설정 (provider=alphavantage일 때 사용)
 alphavantage:
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
-  rate-limit-per-second: 5
+  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # 무료: 5, Premium: 75
   timeout-seconds: 15
   base-url: "https://www.alphavantage.co/query"
   retry:
