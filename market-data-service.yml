@@ -62,9 +62,26 @@ marketdata:
   provider: ${MARKETDATA_PROVIDER:alphavantage}  # alphavantage 또는 yahoo
 
   # Symbol collection (for SymbolCollector)
+  # Phase 1: LISTING_STATUS API로 전체 종목 수집 (시가총액 없음)
+  # Phase 2: 캔들 데이터 수집 (선택적)
+  # Phase 3: 시가총액 점진적 수집
   symbol-collection:
     enabled: ${SYMBOL_COLLECTION_ENABLED:true}
     lookback-days: ${SYMBOL_LOOKBACK_DAYS:365}
+    collect-data: ${SYMBOL_COLLECT_DATA:true}  # 캔들 데이터 수집 여부
+    include-dividends: ${SYMBOL_INCLUDE_DIVIDENDS:true}  # 배당 데이터 포함 여부
+
+  # Symbol listing (LISTING_STATUS API 설정)
+  symbol-listing:
+    only-major-exchanges: ${SYMBOL_LISTING_ONLY_MAJOR:true}  # NYSE/NASDAQ/AMEX만
+    max-symbols: ${SYMBOL_LISTING_MAX:100}  # 최대 종목 수 (0=무제한, 테스트용 100개)
+
+  # Market cap collection (시가총액 수집 설정)
+  # Rate Limit: 5 calls/min = 1000개 종목 약 3.3시간 소요
+  market-cap-collection:
+    enabled: ${MARKET_CAP_COLLECTION_ENABLED:true}
+    batch-size: ${MARKET_CAP_BATCH_SIZE:100}  # 1회 수집 최대 개수
+    log-interval: ${MARKET_CAP_LOG_INTERVAL:10}  # 로그 출력 간격
 
   constants:
     fx:
