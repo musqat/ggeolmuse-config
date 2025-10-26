@@ -32,9 +32,9 @@ keycloak:
   resource: muscat-user-cc
 
 marketdata:
-  # 자동 초기화 설정 (서비스 시작 시 랜덤 종목 추가 및 데이터 수집)
-  auto-init:
-    enabled: ${MARKETDATA_AUTO_INIT:true}
+  # Symbol listing (dev는 50개로 제한)
+  symbol-listing:
+    max-symbols: 50  # 개발 환경에서는 50개만 수집
 
   constants:
     fx:
