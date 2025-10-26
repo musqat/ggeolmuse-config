@@ -1,30 +1,6 @@
-spring:
-  datasource:
-    url: jdbc:h2:mem:marketdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: false
-
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
+# DB 설정은 환경별 프로파일에서 설정
+# - dev: market-data-service-dev.yml (H2 + create-drop)
+# - prod: market-data-service-prod.yml (PostgreSQL + update)
 
 management:
   health:

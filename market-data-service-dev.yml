@@ -15,7 +15,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
@@ -23,8 +23,7 @@ spring:
 
   sql:
     init:
-      mode: always
-      schema-locations: classpath:schema.sql
+      mode: never
 
 # Provider 설정은 기본 설정(market-data-service.yml) 사용
 # Dev 환경에서 다른 provider를 테스트하려면 여기에 오버라이드 추가
