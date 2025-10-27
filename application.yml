@@ -15,6 +15,25 @@ spring:
       host: ${SPRING_REDIS_HOST:redis}
       port: ${SPRING_REDIS_PORT:6379}
 
+  # JPA 공통 설정
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Flyway가 스키마를 관리하므로 validate만 수행
+    show-sql: false
+
+  # SQL 초기화 비활성화 (Flyway 사용)
+  sql:
+    init:
+      mode: never
+
+  # Flyway Database Migration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
