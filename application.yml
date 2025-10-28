@@ -2,6 +2,9 @@
 management:
   server:
     port: 9090  # Health, Metrics, Actuator endpoints port
+  endpoints:
+    web:
+      base-path: /  # Remove /actuator prefix for health checks
   tracing:
     sampling:
       probability: 1.0
