@@ -13,13 +13,12 @@ spring:
           filters:
             - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
 
-        # Market Data Service - Private APIs (JWT 필요)
-        - id: market-data-private-route
+        # Market Data Service - All market APIs (Public, no rewrite needed)
+        - id: market-data-route
           uri: http://market-data-service:8083
           predicates:
             - Path=/api/market/**
-          filters:
-            - RewritePath=/api/market/(?<segment>.*), /api/internal/$\{segment}
+          # No RewritePath filter - forward as-is to MarketController
 
         # User Service - Auth endpoints (Public)
         - id: user-auth-route
