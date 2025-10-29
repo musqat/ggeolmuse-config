@@ -2,7 +2,7 @@
 
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://postgres:5432/backtestdb}
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/ggeolmuse_backtest}
     driverClassName: org.postgresql.Driver
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD}
