@@ -25,8 +25,7 @@ spring:
           uri: http://user-service:8080
           predicates:
             - Path=/api/auth/**
-          filters:
-            - RewritePath=/api/auth/(?<segment>.*), /api/internal/auth/$\{segment}
+          # No RewritePath filter - forward as-is to AuthController
 
         # User Service - User APIs (JWT 필요)
         - id: user-private-route
