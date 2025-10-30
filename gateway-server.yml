@@ -2,6 +2,12 @@ spring:
   main:
     web-application-type: reactive
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:ggeolmuse}/protocol/openid-connect/certs
+
   cloud:
     gateway:
       routes:
