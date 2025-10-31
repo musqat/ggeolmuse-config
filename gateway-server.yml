@@ -5,6 +5,20 @@ spring:
   cloud:
     gateway:
       routes:
+        # Admin APIs - User Management (ADMIN role required)
+        - id: admin-user-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/admin/users/**
+          # No RewritePath filter - forward as-is to AdminUserController
+
+        # Admin APIs - Market Data Management (ADMIN role required)
+        - id: admin-market-route
+          uri: http://market-data-service:8083
+          predicates:
+            - Path=/api/admin/market/**
+          # No RewritePath filter - forward as-is to AdminMarketController
+
         # Market Data Service - Public APIs
         - id: market-data-public-route
           uri: http://market-data-service:8083
