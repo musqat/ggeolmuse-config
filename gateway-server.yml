@@ -38,7 +38,7 @@ spring:
         - id: trade-route
           uri: http://trade-service:8081
           predicates:
-            - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**
+            - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**,/api/transactions/**
           # No RewritePath filter - forward as-is
 
         # Backtest Service (JWT 필요)
