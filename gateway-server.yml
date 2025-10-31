@@ -32,16 +32,14 @@ spring:
           uri: http://user-service:8080
           predicates:
             - Path=/api/users/**,/api/accounts/**
-          filters:
-            - RewritePath=/api/(users|accounts)(.*), /api/internal/$1$2
+          # No RewritePath filter - forward as-is
 
         # Trade Service (JWT 필요)
         - id: trade-route
           uri: http://trade-service:8081
           predicates:
             - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**
-          filters:
-            - RewritePath=/api/(?<prefix>trade|trade-history|portfolio)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+          # No RewritePath filter - forward as-is
 
         # Backtest Service (JWT 필요)
         - id: backtest-route
