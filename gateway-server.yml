@@ -33,7 +33,7 @@ spring:
           predicates:
             - Path=/api/users/**,/api/accounts/**
           filters:
-            - RewritePath=/api/(?<prefix>users|accounts)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+            - RewritePath=/api/(users|accounts)(.*), /api/internal/$1$2
 
         # Trade Service (JWT 필요)
         - id: trade-route
