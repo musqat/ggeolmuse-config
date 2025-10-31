@@ -46,8 +46,7 @@ spring:
           uri: http://backtest-service:8082
           predicates:
             - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
-          filters:
-            - RewritePath=/api/(?<prefix>trading-simulation|backtest|analysis)/(?<segment>.*), /api/internal/$\{prefix}/$\{segment}
+          # No RewritePath filter - forward as-is
 
 services:
   market-data:
