@@ -1,0 +1,16 @@
+# ==================================================================
+# Gateway Server - Development 환경
+# ==================================================================
+
+# Keycloak (로컬)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:muscathan}
+
+# Logging (Dev: 상세)
+logging:
+  level:
+    com.muscat.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework.security: DEBUG
+    reactor.netty: INFO

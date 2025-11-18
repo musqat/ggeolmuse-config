@@ -1,0 +1,132 @@
+# DB 설정은 환경별 프로파일에서 설정
+# - dev: market-data-service-dev.yml (H2 + create-drop)
+# - prod: market-data-service-prod.yml (PostgreSQL + update)
+
+management:
+  health:
+    kafka:
+      enabled: false
+    redis:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Provider 설정 (AlphaVantage ↔ Yahoo Finance 전환)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⚠️ 더 이상 alphavantage.enabled, yahoo-finance.enabled 사용 안 함!
+# ✅ marketdata.provider 하나로 통합 관리
+#
+# 사용법:
+#   marketdata.provider: alphavantage  → AlphaVantage 사용
+#   marketdata.provider: yahoo         → Yahoo Finance 사용
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# AlphaVantage 설정 (provider=alphavantage일 때 사용)
+alphavantage:
+  api-key: ${ALPHAVANTAGE_API_KEY:demo}
+  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # 무료: 5, Premium: 75
+  timeout-seconds: 15
+  base-url: "https://www.alphavantage.co/query"
+  retry:
+    max-attempts: 3
+    backoff-delay: 1000
+
+# Korea EXIM 환율 API
+korea-exim:
+  enabled: true
+  api:
+    auth-key: ${KOREAEXIM_API_KEY:demo}
+  base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
+
+# Yahoo Finance 설정 (provider=yahoo일 때 사용)
+yahoo:
+  finance:
+    base-url: "https://query1.finance.yahoo.com"
+    timeout-seconds: 10
+    rate-limit-per-second: 10
+    retry:
+      max-attempts: 3
+      backoff-delay: 500
+
+keycloak:
+  resource: muscat-user-cc
+
+marketdata:
+  # ━━━ Provider 전환: 이 한 줄만 바꾸면 전체 프로바이더 전환! ━━━
+  provider: ${MARKETDATA_PROVIDER:alphavantage}  # alphavantage 또는 yahoo
+
+  # Symbol collection (for SymbolCollector)
+  # Phase 1: LISTING_STATUS API로 전체 종목 수집 (시가총액 없음)
+  # Phase 2: 캔들 데이터 수집 (선택적)
+  # Phase 3: 시가총액 점진적 수집
+  symbol-collection:
+    enabled: ${SYMBOL_COLLECTION_ENABLED:true}
+    lookback-days: ${SYMBOL_LOOKBACK_DAYS:365}
+    collect-data: ${SYMBOL_COLLECT_DATA:true}  # 캔들 데이터 수집 여부
+    include-dividends: ${SYMBOL_INCLUDE_DIVIDENDS:true}  # 배당 데이터 포함 여부
+
+  # Symbol listing (LISTING_STATUS API 설정)
+  symbol-listing:
+    only-major-exchanges: ${SYMBOL_LISTING_ONLY_MAJOR:true}  # NYSE/NASDAQ/AMEX만
+    max-symbols: ${SYMBOL_LISTING_MAX:100}  # 최대 종목 수 (0=무제한, 테스트용 100개)
+
+  # Market cap collection (시가총액 수집 설정)
+  # Rate Limit: 5 calls/min = 1000개 종목 약 3.3시간 소요
+  market-cap-collection:
+    enabled: ${MARKET_CAP_COLLECTION_ENABLED:true}
+    batch-size: ${MARKET_CAP_BATCH_SIZE:100}  # 1회 수집 최대 개수
+    log-interval: ${MARKET_CAP_LOG_INTERVAL:10}  # 로그 출력 간격
+
+  constants:
+    fx:
+      default-base-rate: ${FX_DEFAULT_RATE:1350}
+      scale: ${FX_SCALE:6}
+      max-fallback-days: ${FX_FALLBACK_DAYS:7}
+    batch:
+      min-rpm: ${BATCH_MIN_RPM:1}
+      max-backoff-ms: ${BATCH_MAX_BACKOFF:30000}
+      millis-per-minute: 60000
+    database:
+      symbol-max-length: 16
+      currency-length: 3
+      decimal-precision: 19
+      decimal-scale: 8
+    calculation:
+      percent-scale: 4
+      percentage-multiplier: 100
+
+    fx-ingest:
+      backfill:
+        enabled: ${FX_BACKFILL_ENABLED:false}
+        lookback-days: ${FX_BACKFILL_LOOKBACK:365}
+      incremental:
+        enabled: ${FX_INCREMENTAL_ENABLED:true}
+        default-days: ${FX_INCREMENTAL_DAYS:30}
+      scheduler:
+        enabled: ${FX_SCHEDULER_ENABLED:false}
+        cron: ${FX_SCHEDULER_CRON:0 10 11 * * MON-FRI}
+        zone: ${FX_SCHEDULER_ZONE:Asia/Seoul}
+
+  # Data collection
+  feed:
+    symbol:
+      enabled: ${SYMBOL_COLLECTION_ENABLED:true}
+      startup-delay: ${SYMBOL_STARTUP_DELAY:90}
+    schedule:
+      enabled: ${SCHEDULE_ENABLED:false}
+      cron: ${SCHEDULE_CRON:0 0 5 * * *}
+      timezone: ${SCHEDULE_TIMEZONE:America/New_York}
+      lookback-days: ${SCHEDULE_LOOKBACK:365}
+
+  # Cache
+  cache:
+    price-data-ttl: ${CACHE_PRICE_TTL:300}
+    fx-rate-ttl: ${CACHE_FX_TTL:3600}
+    symbol-info-ttl: ${CACHE_SYMBOL_TTL:86400}
+    dividend-ttl: ${CACHE_DIVIDEND_TTL:86400}

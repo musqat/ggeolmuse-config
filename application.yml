@@ -1,0 +1,128 @@
+# ==================================================================
+# 모든 서비스 공통 인프라 설정
+# ==================================================================
+
+# ===== Actuator & Monitoring =====
+management:
+  server:
+    port: 9090  # Health, Metrics, Actuator endpoints port
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
+
+# ===== Infrastructure 공통 설정 =====
+spring:
+  config:
+    import: "optional:aws-secretsmanager:ggeolmuse/production"
+
+  # HikariCP 커넥션 풀
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 20000      # 20초
+      idle-timeout: 300000           # 5분
+      max-lifetime: 1200000          # 20분
+      leak-detection-threshold: 60000 # 60초
+      connection-test-query: SELECT 1
+      auto-commit: true
+      register-mbeans: true
+      pool-name: ${spring.application.name:GGeolmuse}-HikariPool
+
+  # JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+
+  # Flyway Database Migration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    validate-on-migrate: false
+
+  # SQL 초기화 비활성화 (Flyway 사용)
+  sql:
+    init:
+      mode: never
+
+  # Redis 공통 설정
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+
+  # Kafka 공통 설정
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    consumer:
+      group-id: ${spring.application.name:ggeolmuse}-consumer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.muscat.*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        compression.type: gzip
+        max.in.flight.requests.per.connection: 5
+        enable.idempotence: true
+    listener:
+      ack-mode: manual
+      type: batch
+
+# OpenAPI/Swagger
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: false
+
+# 로깅
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
+    org.springframework.boot.actuator: WARN
+    org.springframework.cloud.gateway: INFO
+    feign: DEBUG
+    reactor.netty: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.hibernate.orm.jdbc.bind: WARN
+    org.springframework.kafka: INFO
+    org.apache.kafka: WARN
+    com.muscat: DEBUG

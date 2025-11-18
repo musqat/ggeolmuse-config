@@ -1,0 +1,122 @@
+# ==================================================================
+# Trade Service 공통 설정 (모든 환경)
+# ==================================================================
+
+server:
+  port: 8081
+
+# ===== Resilience4j: user-service + market-data-service 호출용 =====
+# trade-service → user-service (계좌 잔액)
+# trade-service → market-data-service (실시간 시세)
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+
+      marketDataService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+
+  retry:
+    instances:
+      userService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+
+      marketDataService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+
+  timelimiter:
+    instances:
+      userService:
+        timeoutDuration: 5s
+        cancelRunningFuture: true
+
+      marketDataService:
+        timeoutDuration: 8s
+        cancelRunningFuture: true
+
+  bulkhead:
+    instances:
+      userService:
+        maxConcurrentCalls: 15
+        maxWaitDuration: 500ms
+
+      marketDataService:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500ms
+
+  ratelimiter:
+    instances:
+      userService:
+        limitForPeriod: 150
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+      marketDataService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+# Feign Client 타임아웃
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 500
+        readTimeout: 1000
+        loggerLevel: basic
+
+# Trade Service 비즈니스 설정
+trade:
+  fee:
+    default-rate: ${TRADE_FEE_RATE:0.0025}
+    minimum-amount: ${TRADE_FEE_MIN:1.00}
+    maximum-rate: ${TRADE_FEE_MAX:0.01}
+  calculation:
+    price-precision: ${PRICE_PRECISION:2}
+    quantity-precision: ${QUANTITY_PRECISION:6}
+    currency-precision: ${CURRENCY_PRECISION:2}
+  validation:
+    max-price-deviation: ${MAX_PRICE_DEVIATION:0.20}
+    min-trade-amount: ${MIN_TRADE_AMOUNT:1.00}
+    max-trade-amount: ${MAX_TRADE_AMOUNT:1000000.00}
+    max-daily-trades: ${MAX_DAILY_TRADES:1000}
+  cache:
+    market-data-ttl: ${CACHE_MARKET_DATA_TTL:300}
+    portfolio-ttl: ${CACHE_PORTFOLIO_TTL:600}
+    balance-ttl: ${CACHE_BALANCE_TTL:300}
+  fifo:
+    enabled: ${FIFO_ENABLED:true}
+    precision: ${FIFO_PRECISION:8}

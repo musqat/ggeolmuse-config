@@ -1,0 +1,234 @@
+# ==================================================================
+# Gateway Server 공통 설정 (모든 환경)
+# ==================================================================
+
+server:
+  port: 8070
+
+spring:
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      # ===== Rate Limiting + Circuit Breaker 라우트 =====
+      routes:
+        # ===== Admin APIs =====
+        - id: admin-user-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/admin/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+            - name: CircuitBreaker
+              args:
+                name: adminUserCB
+                fallbackUri: forward:/fallback
+
+        - id: admin-market-route
+          uri: http://market-data-service:8083
+          predicates:
+            - Path=/api/admin/market/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+            - name: CircuitBreaker
+              args:
+                name: adminMarketCB
+                fallbackUri: forward:/fallback
+
+        # ===== User Service =====
+        - id: user-auth-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+            - name: CircuitBreaker
+              args:
+                name: userAuthCB
+                fallbackUri: forward:/fallback
+
+        - id: user-private-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/users/**,/api/accounts/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+            - name: CircuitBreaker
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/fallback
+
+        # ===== Trade Service =====
+        - id: trade-route
+          uri: http://trade-service:8081
+          predicates:
+            - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**,/api/transactions/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 150
+                redis-rate-limiter.burstCapacity: 300
+            - name: CircuitBreaker
+              args:
+                name: tradeServiceCB
+                fallbackUri: forward:/fallback
+
+        # ===== Market Data Service =====
+        - id: market-data-public-route
+          uri: http://market-data-service:8083
+          predicates:
+            - Path=/api/market/public/**
+          filters:
+            - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+            - name: CircuitBreaker
+              args:
+                name: marketDataPublicCB
+                fallbackUri: forward:/fallback
+
+        - id: market-data-route
+          uri: http://market-data-service:8083
+          predicates:
+            - Path=/api/market/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+            - name: CircuitBreaker
+              args:
+                name: marketDataServiceCB
+                fallbackUri: forward:/fallback
+
+        # ===== Backtest Service =====
+        - id: backtest-route
+          uri: http://backtest-service:8082
+          predicates:
+            - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 500
+                redis-rate-limiter.burstCapacity: 1000
+            - name: CircuitBreaker
+              args:
+                name: backtestServiceCB
+                fallbackUri: forward:/fallback
+
+        # ===== Swagger API Docs Routes (Public) =====
+        - id: user-service-swagger
+          uri: http://user-service:8080
+          predicates:
+            - Path=/user-service/v3/api-docs/**
+          filters:
+            - RewritePath=/user-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+
+        - id: trade-service-swagger
+          uri: http://trade-service:8081
+          predicates:
+            - Path=/trade-service/v3/api-docs/**
+          filters:
+            - RewritePath=/trade-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+
+        - id: market-data-service-swagger
+          uri: http://market-data-service:8083
+          predicates:
+            - Path=/market-data-service/v3/api-docs/**
+          filters:
+            - RewritePath=/market-data-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+
+        - id: backtest-service-swagger
+          uri: http://backtest-service:8082
+          predicates:
+            - Path=/backtest-service/v3/api-docs/**
+          filters:
+            - RewritePath=/backtest-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+
+      # HTTP Client 설정
+      httpclient:
+        connect-timeout: 3000
+        response-timeout: 30s
+
+      # CORS 설정
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7,https://ggeolmuse.com"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+# Service URLs
+services:
+  market-data:
+    uri: http://market-data-service:8083
+  user:
+    uri: http://user-service:8080
+  trade:
+    uri: http://trade-service:8081
+  backtest:
+    uri: http://backtest-service:8082
+
+# CORS Configuration for Spring Security (SecurityConfig.java)
+gateway:
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7,https://ggeolmuse.com"
+
+# SpringDoc Swagger 통합
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: 1. User Service
+        url: /user-service/v3/api-docs
+      - name: 2. Trade Service
+        url: /trade-service/v3/api-docs
+      - name: 3. Market Data Service
+        url: /market-data-service/v3/api-docs
+      - name: 4. Backtest Service
+        url: /backtest-service/v3/api-docs
+  api-docs:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    com.muscat.gateway: INFO
+    reactor.netty: WARN
+
+# Management
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,gateway,routes
+  endpoint:
+    gateway:
+      enabled: true
+    routes:
+      enabled: true

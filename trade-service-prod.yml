@@ -1,0 +1,47 @@
+# ==================================================================
+# Trade Service - Production 환경
+# ==================================================================
+
+spring:
+  # PostgreSQL RDS (환경변수로 주입)
+  datasource:
+    url: ${DB_URL_TRADE}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM:muscathan}
+
+# Keycloak (환경변수로 주입)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET}
+
+# Service URLs (환경변수로 주입)
+market-service:
+  url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+user-service:
+  url: ${USER_SERVICE_URL:http://user-service:8080}
+
+# Logging (Prod: 최소화)
+logging:
+  level:
+    com.muscat.trade: INFO
+    org.springframework.security: WARN

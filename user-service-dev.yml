@@ -1,0 +1,93 @@
+# ==================================================================
+# User Service - Development 환경
+# ==================================================================
+
+spring:
+  # H2 인메모리 데이터베이스
+  datasource:
+    url: jdbc:h2:mem:userdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # 로컬 Mail (테스트용)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:test@example.com}
+    password: ${MAIL_PASSWORD:dummy}
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# Keycloak (로컬)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET:dev-secret}
+  public-url: ${KEYCLOAK_PUBLIC_URL:http://auth.localhost}
+
+# Spring Security
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
+
+# 비즈니스 설정
+app:
+  mail:
+    from: ${MAIL_FROM:noreply@ggeolmuse.com}
+    verification:
+      expiry-hours: ${EMAIL_EXPIRY_HOURS:24}
+      base-url: ${APP_BASE_URL:http://app.localhost}
+  oauth:
+    redirect-uri: ${OAUTH_REDIRECT_URI:http://localhost:3000/auth/callback}
+  frontend:
+    url: ${APP_FRONTEND_URL:http://localhost:3000}
+  market-data:
+    url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+  exchange-rate:
+    min-valid-rate: ${EXCHANGE_RATE_MIN:500}
+    max-valid-rate: ${EXCHANGE_RATE_MAX:2000}
+    fallback-rate: ${EXCHANGE_RATE_FALLBACK:1350.00}
+
+# Logging (Dev: 상세)
+logging:
+  level:
+    com.muscat.user: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Management
+management:
+  health:
+    redis:
+      enabled: false

@@ -1,0 +1,143 @@
+# ==================================================================
+# Backtest Service 공통 설정 (모든 환경)
+# ==================================================================
+
+server:
+  port: 8082
+
+# ===== Resilience4j: market-data-service + trade-service 호출용 =====
+# backtest-service → market-data-service (과거 가격 데이터)
+# backtest-service → trade-service (시뮬레이션 거래)
+resilience4j:
+  circuitbreaker:
+    instances:
+      marketDataService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+
+      tradeService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+
+  retry:
+    instances:
+      marketDataService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+
+      tradeService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+  timelimiter:
+    instances:
+      marketDataService:
+        timeoutDuration: 8s
+        cancelRunningFuture: true
+
+      tradeService:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
+
+  bulkhead:
+    instances:
+      marketDataService:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500ms
+
+      tradeService:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500ms
+
+  ratelimiter:
+    instances:
+      marketDataService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+      tradeService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+# Feign Client 타임아웃
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 500
+        readTimeout: 1500
+        loggerLevel: basic
+
+# Backtest Service 비즈니스 설정
+backtest:
+  calculation:
+    precision: 8
+    scale: 4
+    max-years: 50
+    min-days: 7
+
+  concurrent:
+    max-threads: 4
+    queue-capacity: 100
+    timeout-minutes: 30
+
+  rate-limit:
+    max-requests-per-minute: 1000
+    max-concurrent-backtests: 20
+    daily-limit-per-user: 10000
+
+  strategy:
+    dca:
+      min-monthly-amount: 100.00
+      max-monthly-amount: 10000.00
+    conditional:
+      min-drop-percentage: 5
+      max-drop-percentage: 50
+      min-total-investment: 1000.00
+
+  comparison:
+    max-symbols: 10
+    max-strategies: 5
+    max-timings: 10
+
+  validation:
+    min-investment-amount: 100.00
+    max-investment-amount: 10000000.00
+    max-trading-fee: 0.05
+    required-data-points: 30
+
+  cache:
+    result-ttl-hours: 24
+    history-ttl-hours: 168
+    max-cache-size: 1000
+
+  storage:
+    auto-save-enabled: true
+    max-results-per-user: 1000
+    cleanup-days: 90

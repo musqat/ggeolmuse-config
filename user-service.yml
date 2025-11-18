@@ -1,0 +1,69 @@
+# ==================================================================
+# User Service 공통 설정 (모든 환경)
+# ==================================================================
+
+server:
+  port: 8080
+
+# ===== Resilience4j: market-data-service 호출용 =====
+# user-service → market-data-service (환율 정보)
+resilience4j:
+  circuitbreaker:
+    instances:
+      marketDataService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException
+
+  retry:
+    instances:
+      marketDataService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+
+  timelimiter:
+    instances:
+      marketDataService:
+        timeoutDuration: 8s
+        cancelRunningFuture: true
+
+  bulkhead:
+    instances:
+      marketDataService:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500ms
+
+  ratelimiter:
+    instances:
+      marketDataService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+
+# Feign Client 타임아웃
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 500
+        readTimeout: 1000
+
+# Management
+management:
+  health:
+    redis:
+      enabled: false  # dev에서는 Redis health check 비활성화

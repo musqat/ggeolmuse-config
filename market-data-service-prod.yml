@@ -1,0 +1,48 @@
+# ==================================================================
+# Market Data Service - Production 환경
+# ==================================================================
+
+spring:
+  # PostgreSQL RDS (환경변수로 주입)
+  datasource:
+    url: ${DB_URL_MARKET}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM:muscathan}
+
+# Keycloak (환경변수로 주입)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET}
+
+# Logging (Prod: 최소화)
+logging:
+  level:
+    com.muscat.marketdata: INFO
+    org.springframework.security: WARN

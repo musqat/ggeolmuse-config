@@ -1,0 +1,56 @@
+# ==================================================================
+# Backtest Service - Development 환경
+# ==================================================================
+
+spring:
+  # H2 인메모리 데이터베이스
+  datasource:
+    url: jdbc:h2:mem:backtestdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
+
+# Keycloak (로컬)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET:dev-secret}
+
+# Service URLs
+app:
+  market-data:
+    url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+  trade-service:
+    url: ${TRADE_SERVICE_URL:http://trade-service:8081}
+
+# Logging (Dev: 상세)
+logging:
+  level:
+    com.muscat.backtest: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

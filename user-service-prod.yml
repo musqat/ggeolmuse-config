@@ -1,0 +1,84 @@
+# ==================================================================
+# User Service - Production 환경
+# ==================================================================
+
+spring:
+  # PostgreSQL RDS (환경변수로 주입)
+  datasource:
+    url: ${DB_URL_USER}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # Production SMTP (환경변수로 주입)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  # Spring Security
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM:muscathan}
+
+# Keycloak (환경변수로 주입)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET}
+  public-url: ${KEYCLOAK_PUBLIC_URL}
+
+# 비즈니스 설정 (환경변수로 주입)
+app:
+  mail:
+    from: ${MAIL_FROM}
+    verification:
+      expiry-hours: ${EMAIL_EXPIRY_HOURS:24}
+      base-url: ${APP_BASE_URL}
+  oauth:
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+  frontend:
+    url: ${APP_FRONTEND_URL}
+  market-data:
+    url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+  exchange-rate:
+    min-valid-rate: ${EXCHANGE_RATE_MIN:500}
+    max-valid-rate: ${EXCHANGE_RATE_MAX:2000}
+    fallback-rate: ${EXCHANGE_RATE_FALLBACK:1350.00}
+
+# Logging (Prod: 최소화)
+logging:
+  level:
+    com.muscat.user: INFO
+    org.springframework.security: WARN
+
+# Management
+management:
+  health:
+    redis:
+      enabled: true

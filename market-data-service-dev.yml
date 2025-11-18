@@ -1,0 +1,53 @@
+# ==================================================================
+# Market Data Service - Development 환경
+# ==================================================================
+
+spring:
+  # H2 인메모리 데이터베이스
+  datasource:
+    url: jdbc:h2:mem:marketdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
+
+# Keycloak (로컬)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client
+  credentials:
+    secret: ${KEYCLOAK_SECRET:dev-secret}
+
+# Market Data 설정 (Dev: 제한된 수집)
+marketdata:
+  symbol-listing:
+    max-symbols: 50  # 개발 환경에서는 50개만 수집
+
+# Logging (Dev: 상세)
+logging:
+  level:
+    com.muscat.marketdata: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: WARN
