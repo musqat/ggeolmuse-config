@@ -1,7 +1,4 @@
-# ==================================================================
-# Gateway Server 공통 설정 (모든 환경)
-# ==================================================================
-
+# Gateway Server 공통 설정
 server:
   port: 8070
 
@@ -192,7 +189,7 @@ services:
   backtest:
     uri: http://backtest-service:8082
 
-# CORS Configuration for Spring Security (SecurityConfig.java)
+# CORS Configuration for Spring Security
 gateway:
   cors:
     allowed-origins: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7,https://ggeolmuse.com"

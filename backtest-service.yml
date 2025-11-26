@@ -1,13 +1,9 @@
-# ==================================================================
-# Backtest Service 공통 설정 (모든 환경)
-# ==================================================================
-
+# Backtest Service 공통 설정
 server:
   port: 8082
 
-# ===== Resilience4j: market-data-service + trade-service 호출용 =====
-# backtest-service → market-data-service (과거 가격 데이터)
-# backtest-service → trade-service (시뮬레이션 거래)
+# backtest-service → market-data-service
+# backtest-service → trade-service
 resilience4j:
   circuitbreaker:
     instances:

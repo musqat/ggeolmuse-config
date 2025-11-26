@@ -1,7 +1,3 @@
-# ==================================================================
-# Backtest Service - Development 환경
-# ==================================================================
-
 spring:
   # H2 인메모리 데이터베이스
   datasource:
@@ -32,7 +28,7 @@ spring:
         jwt:
           issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
 
-# Keycloak (로컬)
+# Keycloak
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
   realm: ${KEYCLOAK_REALM:muscathan}
@@ -47,7 +43,7 @@ app:
   trade-service:
     url: ${TRADE_SERVICE_URL:http://trade-service:8081}
 
-# Logging (Dev: 상세)
+# Logging
 logging:
   level:
     com.muscat.backtest: DEBUG

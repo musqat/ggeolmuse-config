@@ -1,13 +1,9 @@
-# ==================================================================
-# Gateway Server - Production 환경
-# ==================================================================
-
-# Keycloak (환경변수로 주입)
+# Keycloak
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
   realm: ${KEYCLOAK_REALM:muscathan}
 
-# Logging (Prod: 최소화)
+# Logging
 logging:
   level:
     com.muscat.gateway: INFO

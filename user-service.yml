@@ -1,12 +1,8 @@
-# ==================================================================
-# User Service 공통 설정 (모든 환경)
-# ==================================================================
-
+# User Service 공통 설정
 server:
   port: 8080
 
-# ===== Resilience4j: market-data-service 호출용 =====
-# user-service → market-data-service (환율 정보)
+# user-service → market-data-service
 resilience4j:
   circuitbreaker:
     instances:

@@ -1,7 +1,3 @@
-# ==================================================================
-# Trade Service - Production 환경
-# ==================================================================
-
 spring:
   # PostgreSQL RDS (환경변수로 주입)
   datasource:
@@ -26,7 +22,7 @@ spring:
         jwt:
           issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM:muscathan}
 
-# Keycloak (환경변수로 주입)
+# Keycloak
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
   realm: ${KEYCLOAK_REALM:muscathan}
@@ -34,13 +30,13 @@ keycloak:
   credentials:
     secret: ${KEYCLOAK_SECRET}
 
-# Service URLs (환경변수로 주입)
+# Service URLs
 market-service:
   url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
 user-service:
   url: ${USER_SERVICE_URL:http://user-service:8080}
 
-# Logging (Prod: 최소화)
+# Logging
 logging:
   level:
     com.muscat.trade: INFO

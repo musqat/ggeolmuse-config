@@ -1,13 +1,9 @@
-# ==================================================================
-# Trade Service 공통 설정 (모든 환경)
-# ==================================================================
-
+# Trade Service 공통 설정
 server:
   port: 8081
 
-# ===== Resilience4j: user-service + market-data-service 호출용 =====
-# trade-service → user-service (계좌 잔액)
-# trade-service → market-data-service (실시간 시세)
+# trade-service → user-service
+# trade-service → market-data-service
 resilience4j:
   circuitbreaker:
     instances:

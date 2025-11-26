@@ -1,13 +1,9 @@
-# ==================================================================
-# Gateway Server - Development 환경
-# ==================================================================
-
-# Keycloak (로컬)
+# Keycloak
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
   realm: ${KEYCLOAK_REALM:muscathan}
 
-# Logging (Dev: 상세)
+# Logging
 logging:
   level:
     com.muscat.gateway: DEBUG

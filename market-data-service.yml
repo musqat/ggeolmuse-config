@@ -1,7 +1,3 @@
-# DB 설정은 환경별 프로파일에서 설정
-# - dev: market-data-service-dev.yml (H2 + create-drop)
-# - prod: market-data-service-prod.yml (PostgreSQL + update)
-
 management:
   health:
     kafka:
@@ -16,26 +12,23 @@ management:
       exposure:
         include: health,info,prometheus
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Provider 설정 (AlphaVantage ↔ Yahoo Finance 전환)
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ⚠️ 더 이상 alphavantage.enabled, yahoo-finance.enabled 사용 안 함!
-# ✅ marketdata.provider 하나로 통합 관리
-#
-# 사용법:
-#   marketdata.provider: alphavantage  → AlphaVantage 사용
-#   marketdata.provider: yahoo         → Yahoo Finance 사용
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-# AlphaVantage 설정 (provider=alphavantage일 때 사용)
+# AlphaVantage
 alphavantage:
   api-key: ${ALPHAVANTAGE_API_KEY:demo}
-  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}  # 무료: 5, Premium: 75
+  rate-limit-per-minute: ${ALPHAVANTAGE_RATE_LIMIT:75}
   timeout-seconds: 15
   base-url: "https://www.alphavantage.co/query"
   retry:
     max-attempts: 3
     backoff-delay: 1000
+  scheduler:
+    zone: ${ALPHAVANTAGE_SCHEDULER_ZONE:Asia/Seoul}
+    fx:
+      cron: ${ALPHAVANTAGE_SCHEDULER_FX_CRON:0 10 11 * * MON-FRI}
+    candle:
+      cron: ${ALPHAVANTAGE_SCHEDULER_CANDLE_CRON:0 0 7 * * MON-FRI}
+    marketcap:
+      cron: ${ALPHAVANTAGE_SCHEDULER_MARKETCAP_CRON:0 0 10 * * MON-FRI}
 
 # Korea EXIM 환율 API
 korea-exim:
@@ -44,7 +37,7 @@ korea-exim:
     auth-key: ${KOREAEXIM_API_KEY:demo}
   base-url: "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON"
 
-# Yahoo Finance 설정 (provider=yahoo일 때 사용)
+# Yahoo Finance
 yahoo:
   finance:
     base-url: "https://query1.finance.yahoo.com"
@@ -58,30 +51,23 @@ keycloak:
   resource: muscat-user-cc
 
 marketdata:
-  # ━━━ Provider 전환: 이 한 줄만 바꾸면 전체 프로바이더 전환! ━━━
-  provider: ${MARKETDATA_PROVIDER:alphavantage}  # alphavantage 또는 yahoo
 
-  # Symbol collection (for SymbolCollector)
-  # Phase 1: LISTING_STATUS API로 전체 종목 수집 (시가총액 없음)
-  # Phase 2: 캔들 데이터 수집 (선택적)
-  # Phase 3: 시가총액 점진적 수집
+  provider: ${MARKETDATA_PROVIDER:alphavantage}
+
   symbol-collection:
     enabled: ${SYMBOL_COLLECTION_ENABLED:true}
     lookback-days: ${SYMBOL_LOOKBACK_DAYS:365}
-    collect-data: ${SYMBOL_COLLECT_DATA:true}  # 캔들 데이터 수집 여부
-    include-dividends: ${SYMBOL_INCLUDE_DIVIDENDS:true}  # 배당 데이터 포함 여부
+    collect-data: ${SYMBOL_COLLECT_DATA:true}
+    include-dividends: ${SYMBOL_INCLUDE_DIVIDENDS:true}
 
-  # Symbol listing (LISTING_STATUS API 설정)
   symbol-listing:
-    only-major-exchanges: ${SYMBOL_LISTING_ONLY_MAJOR:true}  # NYSE/NASDAQ/AMEX만
-    max-symbols: ${SYMBOL_LISTING_MAX:100}  # 최대 종목 수 (0=무제한, 테스트용 100개)
+    only-major-exchanges: ${SYMBOL_LISTING_ONLY_MAJOR:true}
+    max-symbols: ${SYMBOL_LISTING_MAX:100}
 
-  # Market cap collection (시가총액 수집 설정)
-  # Rate Limit: 5 calls/min = 1000개 종목 약 3.3시간 소요
   market-cap-collection:
     enabled: ${MARKET_CAP_COLLECTION_ENABLED:true}
-    batch-size: ${MARKET_CAP_BATCH_SIZE:100}  # 1회 수집 최대 개수
-    log-interval: ${MARKET_CAP_LOG_INTERVAL:10}  # 로그 출력 간격
+    batch-size: ${MARKET_CAP_BATCH_SIZE:100}
+    log-interval: ${MARKET_CAP_LOG_INTERVAL:10}
 
   constants:
     fx:
@@ -113,7 +99,6 @@ marketdata:
         cron: ${FX_SCHEDULER_CRON:0 10 11 * * MON-FRI}
         zone: ${FX_SCHEDULER_ZONE:Asia/Seoul}
 
-  # Data collection
   feed:
     symbol:
       enabled: ${SYMBOL_COLLECTION_ENABLED:true}
@@ -124,7 +109,6 @@ marketdata:
       timezone: ${SCHEDULE_TIMEZONE:America/New_York}
       lookback-days: ${SCHEDULE_LOOKBACK:365}
 
-  # Cache
   cache:
     price-data-ttl: ${CACHE_PRICE_TTL:300}
     fx-rate-ttl: ${CACHE_FX_TTL:3600}
