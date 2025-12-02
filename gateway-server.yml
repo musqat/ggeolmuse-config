@@ -2,6 +2,14 @@
 server:
   port: 8070
 
+# Resilience4j TimeLimiter 설정 (CircuitBreaker 타임아웃)
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 30s
+        cancelRunningFuture: false
+
 spring:
   main:
     web-application-type: reactive
