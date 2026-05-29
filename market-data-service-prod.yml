@@ -37,6 +37,9 @@ keycloak:
   credentials:
     secret: ${KEYCLOAK_SECRET}
 
+marketdata:
+  provider: yahoo
+
 # Logging
 logging:
   level:
