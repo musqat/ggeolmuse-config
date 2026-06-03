@@ -136,6 +136,17 @@ spring:
                 name: backtestServiceCB
                 fallbackUri: forward:/fallback
 
+        # ===== AI Chat Service (FastAPI, /api/chat 그대로 포워딩) =====
+        - id: chat-route
+          uri: http://chat-service:8000
+          predicates:
+            - Path=/api/chat/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: chatServiceCB
+                fallbackUri: forward:/fallback
+
         # ===== Swagger API Docs Routes (Public) =====
         - id: user-service-swagger
           uri: http://user-service:8080
