@@ -1,20 +1,16 @@
 # GGeolmuse Config
 
-Spring Cloud Config Server 중앙 설정 저장소
+Spring Cloud Config Server 중앙 설정 저장소.
 
-## 파일 구조
+## 레이어 (Spring 우선순위: 아래가 위를 덮음)
 
-```
-├── application.yml              # 전체 서비스 공통 설정
-├── {service}.yml                # 서비스별 공통 설정
-├── {service}-dev.yml            # 개발 환경 설정
-└── {service}-prod.yml           # 운영 환경 설정
-```
+- `application.yml` — 전 서비스 공통 (keycloak/jwt/DB풀/kafka 등)
+- `{service}.yml` — 서비스 공통
+- `{service}-{dev|prod}.yml` — 환경별 (DB, 로깅, secret)
+- `application-prod.yml` — prod 전용 (AWS Secrets Manager import)
 
-## 서비스
+## 대상 서비스 (config-server 사용)
 
-- user-service
-- trade-service
-- market-data-service
-- backtest-service
-- gateway-server
+user · trade · market-data · backtest · gateway
+
+> chat-service(AI, Python)는 config-server 미사용 — 환경변수로 설정.

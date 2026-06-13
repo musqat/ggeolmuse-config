@@ -1,7 +1,4 @@
-# Keycloak
-keycloak:
-  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
-  realm: ${KEYCLOAK_REALM:muscathan}
+# Keycloak은 글로벌 (gateway는 secret 미사용)
 
 # Logging
 logging:

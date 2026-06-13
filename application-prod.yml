@@ -1,0 +1,4 @@
+# prod 전용: AWS Secrets Manager에서 운영 시크릿 로드
+spring:
+  config:
+    import: "optional:aws-secretsmanager:ggeolmuse/production"

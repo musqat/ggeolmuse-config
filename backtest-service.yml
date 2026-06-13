@@ -137,3 +137,10 @@ backtest:
     auto-save-enabled: true
     max-results-per-user: 1000
     cleanup-days: 90
+
+# 서비스 URL
+app:
+  market-data:
+    url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+  trade-service:
+    url: ${TRADE_SERVICE_URL:http://trade-service:8081}

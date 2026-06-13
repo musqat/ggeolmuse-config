@@ -58,8 +58,4 @@ feign:
         connectTimeout: 500
         readTimeout: 1000
 
-# Management
-management:
-  health:
-    redis:
-      enabled: false  # dev에서는 Redis health check 비활성화
+# management.health.redis: 환경별 (dev=false, prod=true)

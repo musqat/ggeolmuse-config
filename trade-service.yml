@@ -116,3 +116,9 @@ trade:
   fifo:
     enabled: ${FIFO_ENABLED:true}
     precision: ${FIFO_PRECISION:8}
+
+# 서비스 URL
+market-service:
+  url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
+user-service:
+  url: ${USER_SERVICE_URL:http://user-service:8080}

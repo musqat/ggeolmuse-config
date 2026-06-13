@@ -19,8 +19,14 @@ management:
       endpoint: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
 
 spring:
-  config:
-    import: "optional:aws-secretsmanager:ggeolmuse/production"
+  # AWS Secrets Manager는 prod 프로파일만 (application-prod.yml)
+
+  # JWT resource server (전 서비스 공통)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
 
   # HikariCP 커넥션 풀
   datasource:
@@ -121,3 +127,9 @@ logging:
     org.springframework.kafka: INFO
     org.apache.kafka: WARN
     com.muscat: DEBUG
+
+# Keycloak 공통 (secret만 프로파일별)
+keycloak:
+  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:muscathan}
+  resource: ggeolmuse-client

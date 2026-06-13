@@ -22,13 +22,6 @@ spring:
       hibernate:
         format_sql: true
 
-  # Spring Security
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
-
   # 로컬 Mail (테스트용)
   mail:
     host: smtp.gmail.com
@@ -46,11 +39,8 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
-# Keycloak
+# Keycloak (secret/public-url만 프로파일별)
 keycloak:
-  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
-  realm: ${KEYCLOAK_REALM:muscathan}
-  resource: ggeolmuse-client
   credentials:
     secret: ${KEYCLOAK_SECRET:dev-secret}
   public-url: ${KEYCLOAK_PUBLIC_URL:http://auth.localhost}

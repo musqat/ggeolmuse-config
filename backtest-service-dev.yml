@@ -22,26 +22,10 @@ spring:
       hibernate:
         format_sql: true
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}/realms/${KEYCLOAK_REALM:muscathan}
-
-# Keycloak
+# Keycloak (secret만 프로파일별)
 keycloak:
-  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
-  realm: ${KEYCLOAK_REALM:muscathan}
-  resource: ggeolmuse-client
   credentials:
     secret: ${KEYCLOAK_SECRET:dev-secret}
-
-# Service URLs
-app:
-  market-data:
-    url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
-  trade-service:
-    url: ${TRADE_SERVICE_URL:http://trade-service:8081}
 
 # Logging
 logging:

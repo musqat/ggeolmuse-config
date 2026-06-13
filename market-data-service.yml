@@ -47,9 +47,6 @@ yahoo:
       max-attempts: 3
       backoff-delay: 500
 
-keycloak:
-  resource: muscat-user-cc
-
 marketdata:
 
   provider: ${MARKETDATA_PROVIDER:alphavantage}

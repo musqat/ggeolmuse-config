@@ -33,18 +33,8 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
-  # Spring Security
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM:muscathan}
-
-# Keycloak
+# Keycloak (secret/public-url만 프로파일별)
 keycloak:
-  auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
-  realm: ${KEYCLOAK_REALM:muscathan}
-  resource: ggeolmuse-client
   credentials:
     secret: ${KEYCLOAK_SECRET}
   public-url: ${KEYCLOAK_PUBLIC_URL}
