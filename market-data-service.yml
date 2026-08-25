@@ -47,6 +47,18 @@ yahoo:
       max-attempts: 3
       backoff-delay: 500
 
+  # EC2 를 평일 07:00 에 켜는데 기동에 5~10분이 걸린다.
+  # candle 을 07:00 에 두면 앱이 뜨기 전이라 그날 수집이 통째로 빠진다.
+  # @Scheduled 는 놓친 실행을 따라잡지 않는다.
+  scheduler:
+    zone: ${YAHOO_SCHEDULER_ZONE:Asia/Seoul}
+    candle:
+      cron: ${YAHOO_SCHEDULER_CANDLE_CRON:0 30 7 * * MON-FRI}
+    marketcap:
+      cron: ${YAHOO_SCHEDULER_MARKETCAP_CRON:0 0 10 * * MON-FRI}
+    fx:
+      cron: ${YAHOO_SCHEDULER_FX_CRON:0 10 11 * * MON-FRI}
+
 marketdata:
 
   provider: ${MARKETDATA_PROVIDER:alphavantage}
