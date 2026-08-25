@@ -48,6 +48,18 @@ spring:
                 fallbackUri: forward:/fallback
 
         # ===== User Service =====
+        - id: user-login-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/auth/login
+            - Method=POST
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 10
+
         - id: user-auth-route
           uri: http://user-service:8080
           predicates:
