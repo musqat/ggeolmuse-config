@@ -8,8 +8,11 @@ resilience4j:
   circuitbreaker:
     instances:
       # 호출은 Feign 으로 한다. Feign 은 HttpServerErrorException 을 던지지 않고
-      # feign.FeignException 계열을 던진다. RestTemplate 시절 목록을 그대로 두면
-      # 5xx 를 아무리 받아도 실패로 세지 않아 서킷이 열리지 않는다
+      # FeignException 계열을 던진다. RestTemplate 시절 목록을 그대로 두면 5xx 를
+      # 아무리 받아도 실패로 세지 않아 서킷이 열리지 않는다.
+      #
+      # 5xx 는 FeignServerException, 4xx 는 FeignClientException 이 부모다.
+      # ServerError 나 ClientError 라는 이름은 없다. 틀리면 기동 자체가 실패한다.
       marketDataService:
         registerHealthIndicator: true
         slidingWindowSize: 10
@@ -19,7 +22,7 @@ resilience4j:
         waitDurationInOpenState: 10s
         failureRateThreshold: 50
         recordExceptions:
-          - feign.FeignException$ServerError
+          - feign.FeignException$FeignServerException
           - feign.RetryableException
           - java.util.concurrent.TimeoutException
           - java.io.IOException
@@ -36,7 +39,7 @@ resilience4j:
         waitDurationInOpenState: 10s
         failureRateThreshold: 50
         recordExceptions:
-          - feign.FeignException$ServerError
+          - feign.FeignException$FeignServerException
           - feign.RetryableException
           - java.util.concurrent.TimeoutException
         ignoreExceptions:
@@ -53,7 +56,7 @@ resilience4j:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
         retryExceptions:
-          - feign.FeignException$ServerError
+          - feign.FeignException$FeignServerException
           - feign.RetryableException
           - java.util.concurrent.TimeoutException
         ignoreExceptions:
