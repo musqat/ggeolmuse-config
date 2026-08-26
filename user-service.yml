@@ -6,6 +6,8 @@ server:
 resilience4j:
   circuitbreaker:
     instances:
+      # 호출은 Feign 으로 한다. RestTemplate 예외를 적어두면 5xx 를 받아도
+      # 실패로 세지 않아 서킷이 열리지 않는다. backtest 에서 고친 것과 같은 병이다.
       marketDataService:
         registerHealthIndicator: true
         slidingWindowSize: 10
@@ -16,9 +18,13 @@ resilience4j:
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
         recordExceptions:
-          - org.springframework.web.client.HttpServerErrorException
+          - feign.FeignException$FeignServerException
+          - feign.RetryableException
           - java.util.concurrent.TimeoutException
           - java.io.IOException
+        ignoreExceptions:
+          - feign.FeignException$NotFound
+          - feign.FeignException$BadRequest
 
   retry:
     instances:
@@ -28,7 +34,8 @@ resilience4j:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
         retryExceptions:
-          - org.springframework.web.client.HttpServerErrorException
+          - feign.FeignException$FeignServerException
+          - feign.RetryableException
           - java.util.concurrent.TimeoutException
 
   timelimiter:
