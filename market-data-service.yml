@@ -58,6 +58,8 @@ yahoo:
       cron: ${YAHOO_SCHEDULER_MARKETCAP_CRON:0 0 10 * * MON-FRI}
     fx:
       cron: ${YAHOO_SCHEDULER_FX_CRON:0 10 11 * * MON-FRI}
+    symbol:
+      cron: ${YAHOO_SCHEDULER_SYMBOL_CRON:0 0 8 * * MON-FRI}
 
 marketdata:
 
@@ -69,9 +71,19 @@ marketdata:
     collect-data: ${SYMBOL_COLLECT_DATA:true}
     include-dividends: ${SYMBOL_INCLUDE_DIVIDENDS:true}
 
+  symbol-loader:
+    # NASDAQ 스크리너 시가총액 필터. 여러 값의 구분자는 파이프다.
+    # 콤마로 주면 200 에 rows=null 이 온다. 지금은 시가총액 수집 경로에서만 쓴다.
+    market-cap-filter: ${SYMBOL_MARKET_CAP_FILTER:mega|large}
+
+    # 보통주가 아닌 것을 이름으로 거른다.
+    exclude-name-patterns: ${SYMBOL_EXCLUDE_NAME_PATTERNS:warrant, units,rights,preferred,depositary,notes due}
+
+  # 종목 목록 출처. AlphaVantage LISTING_STATUS 를 쓴다.
   symbol-listing:
     only-major-exchanges: ${SYMBOL_LISTING_ONLY_MAJOR:true}
-    max-symbols: ${SYMBOL_LISTING_MAX:100}
+    # 0 = 무제한. 100 으로 두면 목록이 100개에서 잘린다
+    max-symbols: ${SYMBOL_LISTING_MAX:0}
 
   market-cap-collection:
     enabled: ${MARKET_CAP_COLLECTION_ENABLED:true}

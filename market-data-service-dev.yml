@@ -30,7 +30,7 @@ keycloak:
 # Market Data 설정
 marketdata:
   symbol-listing:
-    max-symbols: 50  # 개발 환경에서는 50개만 수집
+    max-symbols: ${SYMBOL_LISTING_MAX:50}  # 개발 환경 기본 50. 환경변수로 덮을 수 있다
 
 # Logging
 logging:
