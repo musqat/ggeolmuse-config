@@ -59,7 +59,17 @@ spring:
                 redis-rate-limiter.replenishRate: 1
                 redis-rate-limiter.burstCapacity: 30
                 redis-rate-limiter.requestedTokens: 10
-
+        - id: user-recovery-route
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/auth/forgot-password,/api/auth/resend-verification,/api/auth/reset-password
+            - Method=POST
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 10
         - id: user-auth-route
           uri: http://user-service:8080
           predicates:
