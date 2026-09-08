@@ -54,6 +54,8 @@ yahoo:
     zone: ${YAHOO_SCHEDULER_ZONE:Asia/Seoul}
     candle:
       cron: ${YAHOO_SCHEDULER_CANDLE_CRON:0 30 7 * * MON-FRI}
+      # 전 기간 백필은 크게 잡고 한 번 돌린 뒤 되돌린다
+      lookback-days: ${YAHOO_CANDLE_LOOKBACK_DAYS:365}
     marketcap:
       cron: ${YAHOO_SCHEDULER_MARKETCAP_CRON:0 0 10 * * MON-FRI}
     fx:

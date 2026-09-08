@@ -22,6 +22,11 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          # 전 기간 백필은 심볼당 2천 행이 넘는다. 공통값 20 으로는 왕복이 너무 잦다
+          batch_size: 100
 
 # Keycloak (secret만 프로파일별)
 keycloak:
