@@ -114,24 +114,8 @@ feign:
 trade:
   fee:
     default-rate: ${TRADE_FEE_RATE:0.0025}
-    minimum-amount: ${TRADE_FEE_MIN:1.00}
-    maximum-rate: ${TRADE_FEE_MAX:0.01}
   calculation:
     price-precision: ${PRICE_PRECISION:2}
-    quantity-precision: ${QUANTITY_PRECISION:6}
-    currency-precision: ${CURRENCY_PRECISION:2}
-  validation:
-    max-price-deviation: ${MAX_PRICE_DEVIATION:0.20}
-    min-trade-amount: ${MIN_TRADE_AMOUNT:1.00}
-    max-trade-amount: ${MAX_TRADE_AMOUNT:1000000.00}
-    max-daily-trades: ${MAX_DAILY_TRADES:1000}
-  cache:
-    market-data-ttl: ${CACHE_MARKET_DATA_TTL:300}
-    portfolio-ttl: ${CACHE_PORTFOLIO_TTL:600}
-    balance-ttl: ${CACHE_BALANCE_TTL:300}
-  fifo:
-    enabled: ${FIFO_ENABLED:true}
-    precision: ${FIFO_PRECISION:8}
 
 # 서비스 URL
 market-service:
