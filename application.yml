@@ -18,6 +18,11 @@ management:
     tracing:
       endpoint: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
 
+# 오류 응답에 스택트레이스를 싣지 않음
+server:
+  error:
+    include-stacktrace: never
+
 spring:
   # AWS Secrets Manager는 prod 프로파일만 (application-prod.yml)
 

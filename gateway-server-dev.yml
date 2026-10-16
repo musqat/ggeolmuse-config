@@ -7,3 +7,8 @@ logging:
     org.springframework.cloud.gateway: INFO
     org.springframework.security: DEBUG
     reactor.netty: INFO
+
+# 로컬 개발 화면 주소(compose · Vite)
+gateway:
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7"
