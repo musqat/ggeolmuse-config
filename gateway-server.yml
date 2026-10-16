@@ -207,7 +207,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7,https://ggeolmuse.com"
+            allowedOriginPatterns: "${gateway.cors.allowed-origins}"
             allowedMethods:
               - GET
               - POST
@@ -230,10 +230,10 @@ services:
   backtest:
     uri: http://backtest-service:8082
 
-# CORS Configuration for Spring Security
+# CORS 허용 주소(Security · globalcors 공용). 로컬 개발 주소는 -dev 프로필
 gateway:
   cors:
-    allowed-origins: "http://localhost:3000,http://localhost:5173,http://app.localhost,http://172.18.0.6:3000,http://172.18.0.7,https://ggeolmuse.com"
+    allowed-origins: "https://ggeolmuse.com"
 
 # SpringDoc Swagger 통합
 springdoc:
