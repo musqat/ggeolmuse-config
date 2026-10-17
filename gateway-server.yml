@@ -47,6 +47,20 @@ spring:
                 name: adminMarketCB
                 fallbackUri: forward:/fallback
 
+        - id: admin-trade-route
+          uri: http://trade-service:8081
+          predicates:
+            - Path=/api/admin/trade/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+            - name: CircuitBreaker
+              args:
+                name: adminTradeCB
+                fallbackUri: forward:/fallback
+
         # ===== User Service =====
         - id: user-login-route
           uri: http://user-service:8080
