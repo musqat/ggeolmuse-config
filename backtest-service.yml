@@ -68,6 +68,9 @@ resilience4j:
         waitDuration: 1s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - feign.FeignException$FeignServerException
+          - feign.RetryableException
 
   timelimiter:
     instances:
