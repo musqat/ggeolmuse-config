@@ -101,14 +101,18 @@ resilience4j:
         limitRefreshPeriod: 1s
         timeoutDuration: 0s
 
-# Feign Client 타임아웃
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 500
-        readTimeout: 1500
-        loggerLevel: basic
+# Feign 클라이언트 타임아웃. 재시도 3번(1초 · 2초 쉼)이 게이트웨이 30초 안에 들게 잡음
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 1000
+            readTimeout: 5000
+          # 긴 일봉 이력. 재시도까지 27초
+          market-data-internal:
+            readTimeout: 8000
 
 # Backtest Service 비즈니스 설정
 backtest:
