@@ -167,6 +167,8 @@ spring:
               args:
                 redis-rate-limiter.replenishRate: 500
                 redis-rate-limiter.burstCapacity: 1000
+                # 백테스트는 요청 하나가 토큰 10개. 한 사람이 초당 50 · 한꺼번에 100 건까지
+                redis-rate-limiter.requestedTokens: 10
             - name: CircuitBreaker
               args:
                 name: backtestServiceCB
