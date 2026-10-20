@@ -24,7 +24,6 @@ resilience4j:
         recordExceptions:
           - feign.FeignException$FeignServerException
           - feign.RetryableException
-          - java.util.concurrent.TimeoutException
           - java.io.IOException
         ignoreExceptions:
           - feign.FeignException$NotFound
@@ -41,7 +40,6 @@ resilience4j:
         recordExceptions:
           - feign.FeignException$FeignServerException
           - feign.RetryableException
-          - java.util.concurrent.TimeoutException
           - java.io.IOException
         ignoreExceptions:
           - feign.FeignException$NotFound
@@ -57,7 +55,6 @@ resilience4j:
         retryExceptions:
           - feign.FeignException$FeignServerException
           - feign.RetryableException
-          - java.util.concurrent.TimeoutException
 
       marketService:
         maxAttempts: 3
@@ -67,39 +64,6 @@ resilience4j:
         retryExceptions:
           - feign.FeignException$FeignServerException
           - feign.RetryableException
-          - java.util.concurrent.TimeoutException
-
-  timelimiter:
-    instances:
-      userService:
-        timeoutDuration: 5s
-        cancelRunningFuture: true
-
-      marketService:
-        timeoutDuration: 8s
-        cancelRunningFuture: true
-
-  bulkhead:
-    instances:
-      userService:
-        maxConcurrentCalls: 15
-        maxWaitDuration: 500ms
-
-      marketService:
-        maxConcurrentCalls: 10
-        maxWaitDuration: 500ms
-
-  ratelimiter:
-    instances:
-      userService:
-        limitForPeriod: 150
-        limitRefreshPeriod: 1s
-        timeoutDuration: 0s
-
-      marketService:
-        limitForPeriod: 100
-        limitRefreshPeriod: 1s
-        timeoutDuration: 0s
 
 # Feign 클라이언트 타임아웃. 재시도 3번(1초 · 2초 쉼)이 게이트웨이 30초 안에 들게 잡음
 spring:
