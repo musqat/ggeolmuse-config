@@ -2,13 +2,33 @@
 server:
   port: 8070
 
-# Resilience4j TimeLimiter 설정 (CircuitBreaker 타임아웃)
+# 경로 서킷 · 시간 제한 · 벌크헤드 공통 값
 resilience4j:
   timelimiter:
     configs:
       default:
         timeoutDuration: 30s
         cancelRunningFuture: false
+  # 경로마다 동시 50건(게이트웨이 경유 143 rps × p95 0.31초 ≈ 45). 넘치면 기다리지 않고 대체 응답
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 50
+        maxWaitDuration: 0ms
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 20
+        failureRateThreshold: 50
+        slowCallDurationThreshold: 5s
+        slowCallRateThreshold: 80
+        waitDurationInOpenState: 10s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        permittedNumberOfCallsInHalfOpenState: 5
+        # 벌크헤드 거절은 하위 서비스 상태가 아니라 실패로 세지 않음
+        ignoreExceptions:
+          - io.github.resilience4j.bulkhead.BulkheadFullException
 
 spring:
   main:
