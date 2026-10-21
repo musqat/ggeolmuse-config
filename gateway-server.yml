@@ -36,224 +36,226 @@ spring:
 
   cloud:
     gateway:
-      # ===== Rate Limiting + Circuit Breaker 라우트 =====
-      routes:
-        # ===== Admin APIs =====
-        - id: admin-user-route
-          uri: http://user-service:8080
-          predicates:
-            - Path=/api/admin/users/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 50
-                redis-rate-limiter.burstCapacity: 100
-            - name: CircuitBreaker
-              args:
-                name: adminUserCB
-                fallbackUri: forward:/fallback
+      server:
+        webflux:
+          # ===== Rate Limiting + Circuit Breaker 라우트 =====
+          routes:
+            # ===== Admin APIs =====
+            - id: admin-user-route
+              uri: http://user-service:8080
+              predicates:
+                - Path=/api/admin/users/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 50
+                    redis-rate-limiter.burstCapacity: 100
+                - name: CircuitBreaker
+                  args:
+                    name: adminUserCB
+                    fallbackUri: forward:/fallback
 
-        - id: admin-market-route
-          uri: http://market-data-service:8083
-          predicates:
-            - Path=/api/admin/market/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 50
-                redis-rate-limiter.burstCapacity: 100
-            - name: CircuitBreaker
-              args:
-                name: adminMarketCB
-                fallbackUri: forward:/fallback
+            - id: admin-market-route
+              uri: http://market-data-service:8083
+              predicates:
+                - Path=/api/admin/market/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 50
+                    redis-rate-limiter.burstCapacity: 100
+                - name: CircuitBreaker
+                  args:
+                    name: adminMarketCB
+                    fallbackUri: forward:/fallback
 
-        - id: admin-trade-route
-          uri: http://trade-service:8081
-          predicates:
-            - Path=/api/admin/trade/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 50
-                redis-rate-limiter.burstCapacity: 100
-            - name: CircuitBreaker
-              args:
-                name: adminTradeCB
-                fallbackUri: forward:/fallback
+            - id: admin-trade-route
+              uri: http://trade-service:8081
+              predicates:
+                - Path=/api/admin/trade/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 50
+                    redis-rate-limiter.burstCapacity: 100
+                - name: CircuitBreaker
+                  args:
+                    name: adminTradeCB
+                    fallbackUri: forward:/fallback
 
-        # ===== User Service =====
-        - id: user-login-route
-          uri: http://user-service:8080
-          predicates:
-            - Path=/api/auth/login
-            - Method=POST
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 30
-                redis-rate-limiter.requestedTokens: 10
-        - id: user-recovery-route
-          uri: http://user-service:8080
-          predicates:
-            - Path=/api/auth/forgot-password,/api/auth/resend-verification,/api/auth/reset-password
-            - Method=POST
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 1
-                redis-rate-limiter.burstCapacity: 30
-                redis-rate-limiter.requestedTokens: 10
-        - id: user-auth-route
-          uri: http://user-service:8080
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 100
-                redis-rate-limiter.burstCapacity: 200
-            - name: CircuitBreaker
-              args:
-                name: userAuthCB
-                fallbackUri: forward:/fallback
+            # ===== User Service =====
+            - id: user-login-route
+              uri: http://user-service:8080
+              predicates:
+                - Path=/api/auth/login
+                - Method=POST
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 30
+                    redis-rate-limiter.requestedTokens: 10
+            - id: user-recovery-route
+              uri: http://user-service:8080
+              predicates:
+                - Path=/api/auth/forgot-password,/api/auth/resend-verification,/api/auth/reset-password
+                - Method=POST
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 30
+                    redis-rate-limiter.requestedTokens: 10
+            - id: user-auth-route
+              uri: http://user-service:8080
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
+                - name: CircuitBreaker
+                  args:
+                    name: userAuthCB
+                    fallbackUri: forward:/fallback
 
-        - id: user-private-route
-          uri: http://user-service:8080
-          predicates:
-            - Path=/api/users/**,/api/accounts/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 100
-                redis-rate-limiter.burstCapacity: 200
-            - name: CircuitBreaker
-              args:
-                name: userServiceCB
-                fallbackUri: forward:/fallback
+            - id: user-private-route
+              uri: http://user-service:8080
+              predicates:
+                - Path=/api/users/**,/api/accounts/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 100
+                    redis-rate-limiter.burstCapacity: 200
+                - name: CircuitBreaker
+                  args:
+                    name: userServiceCB
+                    fallbackUri: forward:/fallback
 
-        # ===== Trade Service =====
-        - id: trade-route
-          uri: http://trade-service:8081
-          predicates:
-            - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**,/api/transactions/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 150
-                redis-rate-limiter.burstCapacity: 300
-            - name: CircuitBreaker
-              args:
-                name: tradeServiceCB
-                fallbackUri: forward:/fallback
+            # ===== Trade Service =====
+            - id: trade-route
+              uri: http://trade-service:8081
+              predicates:
+                - Path=/api/trade/**,/api/trade-history/**,/api/portfolio/**,/api/transactions/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 150
+                    redis-rate-limiter.burstCapacity: 300
+                - name: CircuitBreaker
+                  args:
+                    name: tradeServiceCB
+                    fallbackUri: forward:/fallback
 
-        # ===== Market Data Service =====
-        - id: market-data-public-route
-          uri: http://market-data-service:8083
-          predicates:
-            - Path=/api/market/public/**
-          filters:
-            - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 200
-                redis-rate-limiter.burstCapacity: 400
-            - name: CircuitBreaker
-              args:
-                name: marketDataPublicCB
-                fallbackUri: forward:/fallback
+            # ===== Market Data Service =====
+            - id: market-data-public-route
+              uri: http://market-data-service:8083
+              predicates:
+                - Path=/api/market/public/**
+              filters:
+                - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 200
+                    redis-rate-limiter.burstCapacity: 400
+                - name: CircuitBreaker
+                  args:
+                    name: marketDataPublicCB
+                    fallbackUri: forward:/fallback
 
-        - id: market-data-route
-          uri: http://market-data-service:8083
-          predicates:
-            - Path=/api/market/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 200
-                redis-rate-limiter.burstCapacity: 400
-            - name: CircuitBreaker
-              args:
-                name: marketDataServiceCB
-                fallbackUri: forward:/fallback
+            - id: market-data-route
+              uri: http://market-data-service:8083
+              predicates:
+                - Path=/api/market/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 200
+                    redis-rate-limiter.burstCapacity: 400
+                - name: CircuitBreaker
+                  args:
+                    name: marketDataServiceCB
+                    fallbackUri: forward:/fallback
 
-        # ===== Backtest Service =====
-        - id: backtest-route
-          uri: http://backtest-service:8082
-          predicates:
-            - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 500
-                redis-rate-limiter.burstCapacity: 1000
-                # 백테스트는 요청 하나가 토큰 10개. 한 사람이 초당 50 · 한꺼번에 100 건까지
-                redis-rate-limiter.requestedTokens: 10
-            - name: CircuitBreaker
-              args:
-                name: backtestServiceCB
-                fallbackUri: forward:/fallback
+            # ===== Backtest Service =====
+            - id: backtest-route
+              uri: http://backtest-service:8082
+              predicates:
+                - Path=/api/trading-simulation/**,/api/backtest/**,/api/analysis/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 500
+                    redis-rate-limiter.burstCapacity: 1000
+                    # 백테스트는 요청 하나가 토큰 10개. 한 사람이 초당 50 · 한꺼번에 100 건까지
+                    redis-rate-limiter.requestedTokens: 10
+                - name: CircuitBreaker
+                  args:
+                    name: backtestServiceCB
+                    fallbackUri: forward:/fallback
 
-        # ===== AI Chat Service (FastAPI, /api/chat 그대로 포워딩) =====
-        - id: chat-route
-          uri: http://chat-service:8000
-          predicates:
-            - Path=/api/chat/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: chatServiceCB
-                fallbackUri: forward:/fallback
+            # ===== AI Chat Service (FastAPI, /api/chat 그대로 포워딩) =====
+            - id: chat-route
+              uri: http://chat-service:8000
+              predicates:
+                - Path=/api/chat/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: chatServiceCB
+                    fallbackUri: forward:/fallback
 
-        # ===== Swagger API Docs Routes (Public) =====
-        - id: user-service-swagger
-          uri: http://user-service:8080
-          predicates:
-            - Path=/user-service/v3/api-docs/**
-          filters:
-            - RewritePath=/user-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+            # ===== Swagger API Docs Routes (Public) =====
+            - id: user-service-swagger
+              uri: http://user-service:8080
+              predicates:
+                - Path=/user-service/v3/api-docs/**
+              filters:
+                - RewritePath=/user-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
 
-        - id: trade-service-swagger
-          uri: http://trade-service:8081
-          predicates:
-            - Path=/trade-service/v3/api-docs/**
-          filters:
-            - RewritePath=/trade-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+            - id: trade-service-swagger
+              uri: http://trade-service:8081
+              predicates:
+                - Path=/trade-service/v3/api-docs/**
+              filters:
+                - RewritePath=/trade-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
 
-        - id: market-data-service-swagger
-          uri: http://market-data-service:8083
-          predicates:
-            - Path=/market-data-service/v3/api-docs/**
-          filters:
-            - RewritePath=/market-data-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+            - id: market-data-service-swagger
+              uri: http://market-data-service:8083
+              predicates:
+                - Path=/market-data-service/v3/api-docs/**
+              filters:
+                - RewritePath=/market-data-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
 
-        - id: backtest-service-swagger
-          uri: http://backtest-service:8082
-          predicates:
-            - Path=/backtest-service/v3/api-docs/**
-          filters:
-            - RewritePath=/backtest-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+            - id: backtest-service-swagger
+              uri: http://backtest-service:8082
+              predicates:
+                - Path=/backtest-service/v3/api-docs/**
+              filters:
+                - RewritePath=/backtest-service/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
 
-      # HTTP Client 설정
-      httpclient:
-        connect-timeout: 3000
-        response-timeout: 30s
+          # HTTP Client 설정
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 30s
 
-      # CORS 설정
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOriginPatterns: "${gateway.cors.allowed-origins}"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - PATCH
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
-            maxAge: 3600
+          # CORS 설정
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns: "${gateway.cors.allowed-origins}"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - PATCH
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: true
+                maxAge: 3600
 
 # Service URLs
 services:
@@ -300,9 +302,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus,metrics,gateway,routes
+        include: health,info,prometheus,metrics,gateway
   endpoint:
     gateway:
-      enabled: true
-    routes:
-      enabled: true
+      access: read-only
