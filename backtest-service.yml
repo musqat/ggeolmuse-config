@@ -3,7 +3,6 @@ server:
   port: 8082
 
 # backtest-service → market-data-service
-# backtest-service → trade-service
 resilience4j:
   circuitbreaker:
     instances:
@@ -29,25 +28,9 @@ resilience4j:
           - feign.FeignException$NotFound
           - feign.FeignException$BadRequest
 
-      tradeService:
-        registerHealthIndicator: true
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 10s
-        failureRateThreshold: 50
-        recordExceptions:
-          - feign.FeignException$FeignServerException
-          - feign.RetryableException
-        ignoreExceptions:
-          - feign.FeignException$NotFound
-          - feign.FeignException$BadRequest
-
   retry:
     instances:
-      # 재시도도 같은 이유로 Feign 예외를 적어야 한다.
-      # 4xx 는 다시 불러도 결과가 같으므로 재시도 대상이 아니다.
+      # 재시도 예외도 위 서킷처럼 Feign 예외로 적음. 4xx 는 다시 불러도 결과가 같아 재시도 안 함
       marketDataService:
         maxAttempts: 3
         waitDuration: 1s
@@ -59,15 +42,6 @@ resilience4j:
         ignoreExceptions:
           - feign.FeignException$NotFound
           - feign.FeignException$BadRequest
-
-      tradeService:
-        maxAttempts: 3
-        waitDuration: 1s
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
-        retryExceptions:
-          - feign.FeignException$FeignServerException
-          - feign.RetryableException
 
 # Feign 클라이언트 타임아웃. 재시도 3번(1초 · 2초 쉼)이 게이트웨이 30초 안에 들게 잡음
 spring:
@@ -134,5 +108,3 @@ backtest:
 app:
   market-data:
     url: ${MARKET_DATA_SERVICE_URL:http://market-data-service:8083}
-  trade-service:
-    url: ${TRADE_SERVICE_URL:http://trade-service:8081}
