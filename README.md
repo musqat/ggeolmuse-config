@@ -24,16 +24,16 @@ user · trade · market-data · backtest · gateway
 모든 값은 `${ENV_NAME:기본값}` 형태로, 실제 값은 주입된다.
 
 - 운영 — AWS Secrets Manager `ggeolmuse/production` 을 `application-prod.yml` 에서 import
-- 로컬 — `docker-compose/.env`
+- 로컬 — `docker-compose/.env` 와 compose 환경변수(DB 주소 · 계정은 compose 가 덮어씀)
 
-dev 프로파일의 H2 계정처럼 의미 없는 값만 그대로 적혀 있다.
+기본값에는 dev 의 `dev-secret` 처럼 의미 없는 값만 적혀 있다.
 
 ## 반영 시점
 
 서비스가 재기동할 때 읽는다.
 
 여기만 고치고 배포를 안 하면 아무 일도 일어나지 않는다. 반대로 코드와 설정이 짝인
-변경은 한쪽만 배포하면 기본값으로 돌아간다. 이미지 태그를 올릴 때 같이 나가야 한다.
+변경은 한쪽만 배포하면 기본값으로 돌아간다. 그래서 이미지 태그를 올릴 때 같이 낸다.
 
 ## 참조 경로
 
