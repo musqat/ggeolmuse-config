@@ -46,8 +46,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 50
-                    redis-rate-limiter.burstCapacity: 100
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
                 - name: CircuitBreaker
                   args:
                     name: adminUserCB
@@ -60,8 +60,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 50
-                    redis-rate-limiter.burstCapacity: 100
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
                 - name: CircuitBreaker
                   args:
                     name: adminMarketCB
@@ -74,8 +74,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 50
-                    redis-rate-limiter.burstCapacity: 100
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
                 - name: CircuitBreaker
                   args:
                     name: adminTradeCB
@@ -111,8 +111,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 100
-                    redis-rate-limiter.burstCapacity: 200
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
                 - name: CircuitBreaker
                   args:
                     name: userAuthCB
@@ -125,8 +125,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 100
-                    redis-rate-limiter.burstCapacity: 200
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
                 - name: CircuitBreaker
                   args:
                     name: userServiceCB
@@ -140,8 +140,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 150
-                    redis-rate-limiter.burstCapacity: 300
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
                 - name: CircuitBreaker
                   args:
                     name: tradeServiceCB
@@ -156,8 +156,8 @@ spring:
                 - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 200
-                    redis-rate-limiter.burstCapacity: 400
+                    redis-rate-limiter.replenishRate: 20
+                    redis-rate-limiter.burstCapacity: 40
                 - name: CircuitBreaker
                   args:
                     name: marketDataPublicCB
@@ -170,8 +170,8 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 200
-                    redis-rate-limiter.burstCapacity: 400
+                    redis-rate-limiter.replenishRate: 20
+                    redis-rate-limiter.burstCapacity: 40
                 - name: CircuitBreaker
                   args:
                     name: marketDataServiceCB
@@ -185,9 +185,9 @@ spring:
               filters:
                 - name: RequestRateLimiter
                   args:
-                    redis-rate-limiter.replenishRate: 500
-                    redis-rate-limiter.burstCapacity: 1000
-                    # 백테스트는 요청 하나가 토큰 10개. 한 사람이 초당 50 · 한꺼번에 100 건까지
+                    redis-rate-limiter.replenishRate: 20
+                    redis-rate-limiter.burstCapacity: 40
+                    # 백테스트는 요청 하나가 토큰 10개. 한 사람이 초당 2 · 한꺼번에 4 건까지
                     redis-rate-limiter.requestedTokens: 10
                 - name: CircuitBreaker
                   args:
