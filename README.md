@@ -9,7 +9,6 @@
 - `application.yml` — 전 서비스 공통 (keycloak/jwt/DB풀/kafka 등)
 - `{service}.yml` — 서비스 공통
 - `{service}-{dev|prod}.yml` — 환경별 (DB, 로깅, secret)
-- `application-prod.yml` — prod 전용 (AWS Secrets Manager import)
 
 ## 대상 서비스 (config-server 사용)
 
@@ -23,7 +22,7 @@ user · trade · market-data · backtest · gateway
 
 모든 값은 `${ENV_NAME:기본값}` 형태로, 실제 값은 주입된다.
 
-- 운영 — AWS Secrets Manager `ggeolmuse/production` 을 `application-prod.yml` 에서 import
+- 운영 — 서비스가 k8s Secret 의 자기 키를 `/etc/secrets` 파일로 받는다. `${ENV_NAME}` 이 같은 이름의 파일을 읽는다(Spring configtree)
 - 로컬 — `docker-compose/.env` 와 compose 환경변수(DB 주소 · 계정은 compose 가 덮어씀)
 
 기본값에는 dev 의 `dev-secret` 처럼 의미 없는 값만 적혀 있다.

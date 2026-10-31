@@ -11,7 +11,7 @@ management:
     metrics:
       export:
         enabled: true
-  # 지연 경보(p95 2초 · 5초)가 읽는 응답 시간 구간
+  # 응답 시간 히스토그램 구간
   metrics:
     distribution:
       slo:
@@ -23,8 +23,6 @@ server:
     include-stacktrace: never
 
 spring:
-  # AWS Secrets Manager는 prod 프로파일만 (application-prod.yml)
-
   # JWT resource server (전 서비스 공통)
   security:
     oauth2:
