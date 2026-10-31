@@ -304,3 +304,8 @@ management:
   endpoint:
     gateway:
       access: read-only
+  # SLO 지연 알림(요청의 95% 1초 안)이 읽는 경로별 응답 시간 구간
+  metrics:
+    distribution:
+      slo:
+        spring.cloud.gateway.requests: 1s
