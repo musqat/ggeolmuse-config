@@ -65,7 +65,7 @@ yahoo:
 
 marketdata:
 
-  provider: ${MARKETDATA_PROVIDER:alphavantage}
+  provider: ${MARKETDATA_PROVIDER:yahoo}
 
   symbol-collection:
     enabled: ${SYMBOL_COLLECTION_ENABLED:true}

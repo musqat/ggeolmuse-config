@@ -96,7 +96,7 @@ spring:
             - id: user-recovery-route
               uri: http://user-service:8080
               predicates:
-                - Path=/api/auth/forgot-password,/api/auth/resend-verification,/api/auth/reset-password
+                - Path=/api/auth/register,/api/auth/forgot-password,/api/auth/resend-verification,/api/auth/reset-password
                 - Method=POST
               filters:
                 - name: RequestRateLimiter
@@ -148,21 +148,6 @@ spring:
                     fallbackUri: forward:/fallback
 
             # ===== Market Data Service =====
-            - id: market-data-public-route
-              uri: http://market-data-service:8083
-              predicates:
-                - Path=/api/market/public/**
-              filters:
-                - RewritePath=/api/market/public/(?<segment>.*), /api/internal/public/$\{segment}
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 20
-                    redis-rate-limiter.burstCapacity: 40
-                - name: CircuitBreaker
-                  args:
-                    name: marketDataPublicCB
-                    fallbackUri: forward:/fallback
-
             - id: market-data-route
               uri: http://market-data-service:8083
               predicates:
