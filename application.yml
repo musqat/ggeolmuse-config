@@ -133,3 +133,8 @@ keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://keycloak:8080}
   realm: ${KEYCLOAK_REALM:muscathan}
   resource: ggeolmuse-client
+
+# 환율을 못 받은 날의 기본 환율(원/USD, 서비스 공통)
+ggeolmuse:
+  fx:
+    default-rate: ${FX_DEFAULT_RATE:1350}

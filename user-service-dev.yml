@@ -45,7 +45,7 @@ app:
   exchange-rate:
     min-valid-rate: ${EXCHANGE_RATE_MIN:500}
     max-valid-rate: ${EXCHANGE_RATE_MAX:2000}
-    fallback-rate: ${EXCHANGE_RATE_FALLBACK:1350.00}
+    fallback-rate: ${ggeolmuse.fx.default-rate}
 
 # Logging
 logging:

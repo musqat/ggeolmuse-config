@@ -94,7 +94,7 @@ marketdata:
 
   constants:
     fx:
-      default-base-rate: ${FX_DEFAULT_RATE:1350}
+      default-base-rate: ${ggeolmuse.fx.default-rate}
       scale: ${FX_SCALE:6}
       max-fallback-days: ${FX_FALLBACK_DAYS:7}
     batch:
