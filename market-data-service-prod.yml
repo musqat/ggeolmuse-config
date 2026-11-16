@@ -12,6 +12,8 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       leak-detection-threshold: 60000
+      # 쿼리 한 건 120초 · 잠금 대기 10초 상한(일봉 배치용으로 공통 60초보다 길게)
+      connection-init-sql: "SET statement_timeout = '120s'; SET lock_timeout = '10s'"
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

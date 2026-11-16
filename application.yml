@@ -43,9 +43,13 @@ spring:
       auto-commit: true
       register-mbeans: true
       pool-name: ${spring.application.name:GGeolmuse}-HikariPool
+      # 새 커넥션마다 쿼리 한 건 60초 · 잠금 대기 10초 상한(넘으면 그 쿼리만 실패)
+      connection-init-sql: "SET statement_timeout = '60s'; SET lock_timeout = '10s'"
 
   # JPA/Hibernate
   jpa:
+    # 요청 끝까지 커넥션을 쥐지 않음(트랜잭션 밖 지연 로딩 없음)
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     show-sql: false
