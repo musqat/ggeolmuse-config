@@ -5,11 +5,6 @@ spring:
       hibernate:
         format_sql: true
 
-# Keycloak (secret만 프로파일별)
-keycloak:
-  credentials:
-    secret: ${KEYCLOAK_SECRET:dev-secret}
-
 # Logging
 logging:
   level:
